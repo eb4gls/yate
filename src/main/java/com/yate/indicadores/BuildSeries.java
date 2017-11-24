@@ -22,7 +22,8 @@ public class BuildSeries
 	private static Logger trace=Logger.getLogger (BuildSeries.class);
 	
 	
-	public static TimeSeries exec (List<String[]> lines)
+	
+	public static TimeSeries exec (List<String[]> lines,int tickTime)
 	{
 		int i;
 		List<Tick> ticks=null;
@@ -63,6 +64,7 @@ public class BuildSeries
 				
 				trace.info ("Se ha invertido el orden del fichero cargado, la fecha de la linea 0 era mayor que la de la linea "+(lines.size ()-1));
 			}
+			
 			// Building the empty ticks (every 300 seconds, yeah welcome in Bitcoin world)
 			ticks=buildEmptyTicks (beginTime,endTime,300);
 			// Filling the ticks with trades
