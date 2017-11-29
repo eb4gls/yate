@@ -5,7 +5,8 @@ public enum BaseCalc
 	SERIES ("Series",1),
 	CLOSE_PRICE ("Close",2),
 	TYPICAL_PRICE ("Typical",3),
-	VARIATION_PRICE ("Variation",4);
+	VARIATION_PRICE ("Variation",4),
+	MEDIAN_PRICE ("Median",5);
 	
 				
 	private String baseCalc;
@@ -45,7 +46,12 @@ public enum BaseCalc
 						return VARIATION_PRICE;
 					}
 					else{
-						return null;
+						if (base.equalsIgnoreCase (BaseCalc.MEDIAN_PRICE.getBaseCalcName ())){
+							return MEDIAN_PRICE;
+						}
+						else{
+							return null;
+						}
 					}
 				}
 			}

@@ -31,9 +31,17 @@ import eu.verdelhan.ta4j.Indicator;
 import eu.verdelhan.ta4j.TimeSeries;
 import eu.verdelhan.ta4j.indicators.AwesomeOscillatorIndicator;
 import eu.verdelhan.ta4j.indicators.CachedIndicator;
+import eu.verdelhan.ta4j.indicators.EMAIndicator;
+import eu.verdelhan.ta4j.indicators.FisherIndicator;
+import eu.verdelhan.ta4j.indicators.HMAIndicator;
 import eu.verdelhan.ta4j.indicators.MACDIndicator;
+import eu.verdelhan.ta4j.indicators.PPOIndicator;
+import eu.verdelhan.ta4j.indicators.RAVIIndicator;
+import eu.verdelhan.ta4j.indicators.ROCIndicator;
 import eu.verdelhan.ta4j.indicators.RSIIndicator;
+import eu.verdelhan.ta4j.indicators.WilliamsRIndicator;
 import eu.verdelhan.ta4j.indicators.helpers.ClosePriceIndicator;
+import eu.verdelhan.ta4j.indicators.helpers.MedianPriceIndicator;
 import eu.verdelhan.ta4j.indicators.helpers.PriceVariationIndicator;
 import eu.verdelhan.ta4j.indicators.helpers.TypicalPriceIndicator;
 
@@ -50,14 +58,45 @@ public class BuildIndicators
 	
 	
 	static private final int AWESOME_NUMBER_OF_ARGS=3;
-	static private final String AWESOME_NAME="awesome";
 	static private final String AWESOME_SHORT_NAME="aws";
+	static private final String AWESOME_NAME="awesome";
+	
+	
 	static private final int MACD_NUMBER_OF_ARGS=3;
 	static private final String MACD_SHORT_NAME="macd";
 	static private final String MACD_NAME="macd";
+	
 	static private final int RSI_NUMBER_OF_ARGS=2;
 	static private final String RSI_SHORT_NAME="rsi";
 	static private final String RSI_NAME="rsi";
+	
+	static private final int EMA_NUMBER_OF_ARGS=2;
+	static private final String EMA_SHORT_NAME="ema";
+	static private final String EMA_NAME="ema";
+	
+	static private final int PPO_NUMBER_OF_ARGS=3;
+	static private final String PPO_SHORT_NAME="ppo";
+	static private final String PPO_NAME="ppo";
+	
+	static private final int ROC_NUMBER_OF_ARGS=2;
+	static private final String ROC_SHORT_NAME="roc";
+	static private final String ROC_NAME="roc";
+	
+	static private final int WILL_NUMBER_OF_ARGS=2;
+	static private final String WILL_SHORT_NAME="will";
+	static private final String WILL_NAME="williansr";
+	
+	static private final int FISHER_NUMBER_OF_ARGS=2;
+	static private final String FISHER_SHORT_NAME="fshr";
+	static private final String FISHER_NAME="fisher";
+	
+	static private final int HMA_NUMBER_OF_ARGS=2;
+	static private final String HMA_SHORT_NAME="hma";
+	static private final String HMA_NAME="hma";
+	
+	static private final int RAVI_NUMBER_OF_ARGS=3;
+	static private final String RAVI_SHORT_NAME="ravi";
+	static private final String RAVI_NAME="ravi";
 	
 	//Argumentos de la linea de comando
 	private String csvInFile=null;
@@ -73,6 +112,7 @@ public class BuildIndicators
 	private TypicalPriceIndicator typicalPrice=null;
     // Price variation
 	private PriceVariationIndicator priceVariation=null;
+	private MedianPriceIndicator medianPrice=null;
 	
 	private TimeSeries series=null;
 
@@ -109,8 +149,12 @@ public class BuildIndicators
 	    buildIndicators.typicalPrice=new TypicalPriceIndicator (buildIndicators.series);
 	 	// Price variation
 	    buildIndicators.priceVariation=new PriceVariationIndicator (buildIndicators.series);
+	    // Median price
+	    buildIndicators.medianPrice=new MedianPriceIndicator (buildIndicators.series);
 	    
-	    buildIndicators.parseIndicatorArgs (args);
+	    if (!buildIndicators.parseIndicatorArgs (args)){
+	    	System.exit (2);
+	    }
 	    
 	    buildIndicators.build (buildIndicators.csvOutFile);
 	}
@@ -133,6 +177,14 @@ public class BuildIndicators
 		Option awesomeIndOpt=null;
 		Option macdIndOpt=null;
 		Option rsiIndOpt=null;
+		Option emaIndOpt=null;
+		Option ppoIndOpt=null;
+		Option rocIndOpt=null;
+		Option willIndOpt=null;
+		Option fisherIndOpt=null;
+		Option hmaIndOpt=null;
+		Option raviIndOpt=null;
+		
 		
 	
 		
@@ -151,21 +203,60 @@ public class BuildIndicators
 	
 		//Indicadores
 		//Awesome, 3 argumentos: p1, p2, [close price, variation price, typical price]
-		awesomeIndOpt=new Option (AWESOME_SHORT_NAME,AWESOME_NAME,true,"Indicador Awesome. Usar -aws o --awesome, argumentos <timeFrameSma1> <timeFrameSma1> <Base de calculo (close,typical,variation)>");
+		awesomeIndOpt=new Option (AWESOME_SHORT_NAME,AWESOME_NAME,true,"Indicador Awesome. Usar -aws o --awesome, argumentos <timeFrameSma1> <timeFrameSma1> <Base de calculo (close,typical,variation,median)>");
 		awesomeIndOpt.setOptionalArg (true);
 		awesomeIndOpt.setArgs (AWESOME_NUMBER_OF_ARGS);
 		awesomeIndOpt.setValueSeparator (',');
 		//MACD
-		macdIndOpt=new Option (MACD_SHORT_NAME,MACD_NAME,true,"Indicador MACD. Usar -macd o --macd, argumentos <ShortTimeFrame> <LongTimeFrame> <Base de calculo (close,typical,variation)>");
+		macdIndOpt=new Option (MACD_SHORT_NAME,MACD_NAME,true,"Indicador MACD. Usar -macd o --macd, argumentos <ShortTimeFrame> <LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
 		macdIndOpt.setOptionalArg (true);
 		macdIndOpt.setArgs (MACD_NUMBER_OF_ARGS);
 		macdIndOpt.setValueSeparator (',');
 		//RSI
-		rsiIndOpt=new Option (RSI_SHORT_NAME,RSI_NAME,true,"Indicador RSI. Usar -rsi o --rsHelpFormatter formatter=null;i, argumentos <TimeFrame> <Base de calculo (close,typical,variation)>");
+		rsiIndOpt=new Option (RSI_SHORT_NAME,RSI_NAME,true,"Indicador RSI. Usar -rsi o --rsi, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
 		rsiIndOpt.setOptionalArg (true);
 		rsiIndOpt.setArgs (RSI_NUMBER_OF_ARGS);
 		rsiIndOpt.setValueSeparator (',');
+		//EMA
+		emaIndOpt=new Option (EMA_SHORT_NAME,EMA_NAME,true,"Indicador EMA. Usar -ema o --ema, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		emaIndOpt.setOptionalArg (true);
+		emaIndOpt.setArgs (EMA_NUMBER_OF_ARGS);
+		emaIndOpt.setValueSeparator (',');
+		//PPO
+		ppoIndOpt=new Option (PPO_SHORT_NAME,PPO_NAME,true,"Indicador PPO. Usar -ppo o --ppo, argumentos <ShortTimeFrame> <LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		ppoIndOpt.setOptionalArg (true);
+		ppoIndOpt.setArgs (PPO_NUMBER_OF_ARGS);
+		ppoIndOpt.setValueSeparator (',');
+		//ROC
+		rocIndOpt=new Option (ROC_SHORT_NAME,ROC_NAME,true,"Indicador ROC. Usar -roc o --roc, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		rocIndOpt.setOptionalArg (true);
+		rocIndOpt.setArgs (ROC_NUMBER_OF_ARGS);
+		rocIndOpt.setValueSeparator (',');
+		//WILLIANSR
+		willIndOpt=new Option (WILL_SHORT_NAME,WILL_NAME,true,"Indicador WilliansR. Usar -will o --williansR, usa la serie original, argumentos <TimeFrame> <Base de calculo (series)>");
+		willIndOpt.setOptionalArg (true);
+		willIndOpt.setArgs (WILL_NUMBER_OF_ARGS);
+		willIndOpt.setValueSeparator (',');
+		//FISHER
+		fisherIndOpt=new Option (FISHER_SHORT_NAME,FISHER_NAME,true,"Indicador Fisher. Usar -fshr o --fisher, usa generalmente median, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		fisherIndOpt.setOptionalArg (true);
+		fisherIndOpt.setArgs (FISHER_NUMBER_OF_ARGS);
+		fisherIndOpt.setValueSeparator (',');
+		//HMA
+		hmaIndOpt=new Option (HMA_SHORT_NAME,HMA_NAME,true,"Indicador HMA. Usar -hma o --hma, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		hmaIndOpt.setOptionalArg (true);
+		hmaIndOpt.setArgs (HMA_NUMBER_OF_ARGS);
+		hmaIndOpt.setValueSeparator (',');		
+		//RAVI
+		raviIndOpt=new Option (RAVI_SHORT_NAME,RAVI_NAME,true,"Indicador RAVI. Usar -ravi o --ravi, argumentos <ShortSmaTimeFrame> <LongSmaTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		raviIndOpt.setOptionalArg (true);
+		raviIndOpt.setArgs (RAVI_NUMBER_OF_ARGS);
+		raviIndOpt.setValueSeparator (',');
 
+		
+		
+
+		
 		
 	    options=new Options ();
 
@@ -179,6 +270,14 @@ public class BuildIndicators
 	    options.addOption (awesomeIndOpt);
 	    options.addOption (macdIndOpt);
 	    options.addOption (rsiIndOpt);
+	    options.addOption (emaIndOpt);
+	    options.addOption (ppoIndOpt);
+	    options.addOption (rocIndOpt);
+	    options.addOption (willIndOpt);
+	    options.addOption (fisherIndOpt);
+	    options.addOption (hmaIndOpt);
+	    options.addOption (raviIndOpt);
+	    
 	    
 	  
 	    cliParser=new GnuParser ();
@@ -220,7 +319,7 @@ public class BuildIndicators
 	}
 	
 	
-	private void parseIndicatorArgs (String[] args)
+	private boolean parseIndicatorArgs (String[] args)
 	{
 		String []IndicatorArgs=null;
 		
@@ -245,10 +344,48 @@ public class BuildIndicators
 				IndicatorArgs=cliLine.getOptionValues (MACD_NAME);
 				buildIndicatorInstance (MACDIndicator.class,MACD_NAME,IndicatorArgs,MACD_NUMBER_OF_ARGS);
 			}
+			//EMA
+			if (cliLine.hasOption (EMA_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (EMA_NAME);
+				buildIndicatorInstance (EMAIndicator.class,EMA_NAME,IndicatorArgs,EMA_NUMBER_OF_ARGS);
+			}
+			//PPO
+			if (cliLine.hasOption (PPO_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (PPO_NAME);
+				buildIndicatorInstance (PPOIndicator.class,PPO_NAME,IndicatorArgs,PPO_NUMBER_OF_ARGS);
+			}
+			//ROC
+			if (cliLine.hasOption (ROC_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (ROC_NAME);
+				buildIndicatorInstance (ROCIndicator.class,ROC_NAME,IndicatorArgs,ROC_NUMBER_OF_ARGS);
+			}
+			//Willians R
+			if (cliLine.hasOption (WILL_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (WILL_NAME);
+				buildIndicatorInstance (WilliamsRIndicator.class,WILL_NAME,IndicatorArgs,WILL_NUMBER_OF_ARGS);
+			}
+			//Fisher
+			if (cliLine.hasOption (FISHER_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (FISHER_NAME);
+				buildIndicatorInstance (FisherIndicator.class,FISHER_NAME,IndicatorArgs,FISHER_NUMBER_OF_ARGS);
+			}
+			//HMAIndicator
+			if (cliLine.hasOption (HMA_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (HMA_NAME);
+				buildIndicatorInstance (HMAIndicator.class,HMA_NAME,IndicatorArgs,HMA_NUMBER_OF_ARGS);
+			}
+			//RAVI
+			if (cliLine.hasOption (RAVI_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (RAVI_NAME);
+				buildIndicatorInstance (RAVIIndicator.class,RAVI_NAME,IndicatorArgs,RAVI_NUMBER_OF_ARGS);
+			}
 		}
 		catch (InternalErrorException e){
 			trace.error ("Error instanciando indicadores ",e);
+			return false;
 		}
+		
+		return true;
 	}
 
 	
@@ -274,66 +411,68 @@ public class BuildIndicators
     	CachedIndicator<Decimal> indicator=null;
     	
     	if ((IndicatorArgs.length%nUnitArgs)!=0){
-    		trace.error ("El indicador "+name+" requiere "+nUnitArgs+" argumentos para cada instancia");
-    		return;
+    		throw new InternalErrorException ("El indicador "+name+" requiere "+nUnitArgs+" argumentos para cada instancia");
     	}
     	
-    	//Se busca el constructor usando reflection
-    	constructorClassArgs=new Class<?>[nUnitArgs];
-    	constructorClassArgs[0]=Indicator.class;
-    	for (i=0;i<nUnitArgs-1;i++){
-    		constructorClassArgs[i+1]=int.class;
-    	}
-    	try{
-			constructor=clazz.getConstructor (constructorClassArgs);
-		}
-		catch (NoSuchMethodException e){
-			trace.error ("Error obteniendo el constructor del indicador "+name,e);
-			return;
-		}
-		catch (SecurityException e){
-			trace.error ("Error obteniendo el constructor del indicador "+name,e);
-			return;
-		}
-    	
+    	constructorClassArgs=new Class<?>[nUnitArgs];    	
     	constructorArgs=new Object[nUnitArgs];
     	for (i=0;i<IndicatorArgs.length/nUnitArgs;i++){
     		
     		for (j=0;j<nUnitArgs-1;j++){
     			try{
+    				constructorClassArgs[j+1]=int.class;
     				//constructorArgs[j+1]=Integer.parseInt (IndicatorArgs[(i*nUnitArgs)+j]);
     				iarg=Integer.parseInt (IndicatorArgs[(i*nUnitArgs)+j]);
     				constructorArgs[j+1]=iarg;
     			}
     			catch (NumberFormatException e){
-    				trace.error ("Error el argumento "+IndicatorArgs[(i*nUnitArgs)]+" del indicador "+name+", no es un entero");
-    				return;
+    				throw new InternalErrorException ("Error el argumento "+IndicatorArgs[(i*nUnitArgs)]+" del indicador "+name+", no es un entero");
     			}
     		}
     		
     		//if ((baseCalc=BaseCalc.getBaseCalc (IndicatorArgs[(i*nUnitArgs)+(nUnitArgs-1)]))==null){
     		if ((baseCalc=BaseCalc.getBaseCalc (IndicatorArgs[(i*nUnitArgs)+j]))==null){
-    			trace.error ("La base de calculo indicada para el indicador "+name+", es desconocida");
-        		return;
+    			throw new InternalErrorException ("La base de calculo indicada para el indicador "+name+", es desconocida");
     		}
     		switch (baseCalc){
-			case CLOSE_PRICE:
-				constructorArgs[0]=closePrice;
-				break;
 			case SERIES:
 				constructorArgs[0]=series;
+				constructorClassArgs[0]=TimeSeries.class;
+				break;
+			case CLOSE_PRICE:
+				constructorArgs[0]=closePrice;
+				constructorClassArgs[0]=Indicator.class;
 				break;
 			case TYPICAL_PRICE:
 				constructorArgs[0]=typicalPrice;
+				constructorClassArgs[0]=Indicator.class;
 				break;
 			case VARIATION_PRICE:
 				constructorArgs[0]=priceVariation;
+				constructorClassArgs[0]=Indicator.class;
+				break;
+			case MEDIAN_PRICE:
+				constructorArgs[0]=medianPrice;
+				constructorClassArgs[0]=Indicator.class;
 				break;
 			default:
 				trace.error ("La base de calculo indicada para el indicador "+name+", es desconocida");
         		return;
     		}
-    	
+    		
+    		
+    		//Se busca el constructor usando reflection
+    		try{
+    			constructor=clazz.getConstructor (constructorClassArgs);
+    		}
+    		catch (NoSuchMethodException e){
+    			throw new InternalErrorException ("Error obteniendo el constructor del indicador "+name+" ("+e+")");
+    		}
+    		catch (SecurityException e){
+    			throw new InternalErrorException ("Error obteniendo el constructor del indicador "+name+" ("+e+")");
+    		}
+    		
+    		//Se invoca
     		try{
 				indicator=(CachedIndicator<Decimal>)constructor.newInstance (constructorArgs);
 			}
@@ -352,14 +491,7 @@ public class BuildIndicators
     		indicators.add (new IndicatorArgs (name,indicator));
     	}
 	}
-	
-	/*public static Child create(Integer i, String s) throws Exception
-	{
-	  Constructor c = Class.forName(childClass).getConstructor(new Object[]{Integer.class, String.class});
-	  c.setAccessible(true);
-	  Child instance = (Child) c.newInstance(new Object[]{i , s}) ; 
-	  return instance;
-	}*/
+
 	
 	
 	private void build (String csvOutFile)
@@ -369,28 +501,7 @@ public class BuildIndicators
         PrintStream pos=null;
         
 		
-		/*
-		// Simple moving averages
-		shortSma=new SMAIndicator (closePrice,8);
-		longSma=new SMAIndicator (closePrice,20);
-		// Exponential moving averages
-		shortEma=new EMAIndicator (closePrice,8);
-		longEma=new EMAIndicator (closePrice,20);
-		// Percentage price oscillator
-		ppo=new PPOIndicator (closePrice,12,26);
-		// Rate of change
-		roc=new ROCIndicator (closePrice,100);
-		// Relative strength index
-		rsi=new RSIIndicator (closePrice,14);
-		// Williams %R
-		williamsR=new WilliamsRIndicator (series,20);
-		// Average true range
-		atr=new AverageTrueRangeIndicator (series,20);
-		// Standard deviation
-		sd=new StandardDeviationIndicator (closePrice,14);
 		
-		//awesome=new AwesomeOscillatorIndicator (); 
-*/
 
 		try{
 			if (csvOutFile==null){
@@ -410,10 +521,10 @@ public class BuildIndicators
 	        for (i=0;i<series.getTickCount();i++){
 		        strBuff=new StringBuffer ();
 		        
-		        strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',')
-		        .append(closePrice.getValue(i)).append(',')
-		        .append(typicalPrice.getValue(i)).append(',')
-		        .append(priceVariation.getValue(i)).append(',');
+		        strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
+		        //.append(closePrice.getValue(i)).append(',')
+		        //.append(typicalPrice.getValue(i)).append(',')
+		        //.append(priceVariation.getValue(i)).append(',');
 		    	for (IndicatorArgs item:indicators){
 		    		strBuff.append (item.getIndicator ().getValue (i)).append(',');
 				}
@@ -431,116 +542,6 @@ public class BuildIndicators
 		}
 	}
 
-	
-/*	
-	private void build (TimeSeries series,String csvOutFile)
-	{
-		int i;
-		StringBuffer strBuff=null;
-		
-		ClosePriceIndicator closePrice=null;
-	    TypicalPriceIndicator typicalPrice = null;
-        // Price variation
-        PriceVariationIndicator priceVariation = null;
-        // Simple moving averages
-        SMAIndicator shortSma = null;
-        SMAIndicator longSma = null;
-        // Exponential moving averages
-        EMAIndicator shortEma = null;
-        EMAIndicator longEma = null;
-        // Percentage price oscillator
-        PPOIndicator ppo = null;
-        // Rate of change
-        ROCIndicator roc = null;
-        // Relative strength index
-        RSIIndicator rsi = null;
-        // Williams %R
-        WilliamsRIndicator williamsR = null;
-        // Average true range
-        AverageTrueRangeIndicator atr = null;
-        // Standard deviation
-        StandardDeviationIndicator sd = null;
-        
-        AwesomeOscillatorIndicator awesome=null;
-	    
-        
-        PrintStream pos=null;
-        
-        
-      	// Close price
-		closePrice=new ClosePriceIndicator (series);
-		// Typical price
-		typicalPrice=new TypicalPriceIndicator (series);
-		// Price variation
-		priceVariation=new PriceVariationIndicator (series);
-		
-		// Simple moving averages
-		shortSma=new SMAIndicator (closePrice,8);
-		longSma=new SMAIndicator (closePrice,20);
-		// Exponential moving averages
-		shortEma=new EMAIndicator (closePrice,8);
-		longEma=new EMAIndicator (closePrice,20);
-		// Percentage price oscillator
-		ppo=new PPOIndicator (closePrice,12,26);
-		// Rate of change
-		roc=new ROCIndicator (closePrice,100);
-		// Relative strength index
-		rsi=new RSIIndicator (closePrice,14);
-		// Williams %R
-		williamsR=new WilliamsRIndicator (series,20);
-		// Average true range
-		atr=new AverageTrueRangeIndicator (series,20);
-		// Standard deviation
-		sd=new StandardDeviationIndicator (closePrice,14);
-		
-		//awesome=new AwesomeOscillatorIndicator (); 
-
-
-		try{
-			if (csvOutFile==null){
-				pos=System.out;
-			}
-			else{
-				try{
-					pos=new PrintStream (csvOutFile);
-				}
-				catch (FileNotFoundException e){
-					trace.error ("No se pudo crear el fichero "+csvOutFile,e);
-					return;
-				}
-			}
-	        
-	   
-	        for (i=0;i<series.getTickCount();i++){
-		        strBuff=new StringBuffer ();
-		        
-		        strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',')
-		        .append(closePrice.getValue(i)).append(',')
-		        .append(typicalPrice.getValue(i)).append(',')
-		        .append(priceVariation.getValue(i)).append(',')
-		        .append(shortSma.getValue(i)).append(',')
-		        .append(longSma.getValue(i)).append(',')
-		        .append(shortEma.getValue(i)).append(',')
-		        .append(longEma.getValue(i)).append(',')
-		        .append(ppo.getValue(i)).append(',')
-		        .append(roc.getValue(i)).append(',')
-		        .append(rsi.getValue(i)).append(',')
-		        .append(williamsR.getValue(i)).append(',')
-		        .append(atr.getValue(i)).append(',')
-		        .append(sd.getValue(i));;
-		        
-		        pos.println (strBuff);
-	        }
-		}
-		finally{
-			pos.flush ();
-			if ((csvOutFile!=null)&&(pos!=null)){
-				pos.close ();
-				pos=null;
-			}
-		}
-	}
-	*/
 	
 	/**
 	 * Genera un lista de lineas a partir de un fichero CSV. La carga se realiza a partir del path suministrado para el fichero
