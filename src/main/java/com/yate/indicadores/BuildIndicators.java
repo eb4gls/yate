@@ -203,52 +203,53 @@ public class BuildIndicators
 	
 		//Indicadores
 		//Awesome, 3 argumentos: p1, p2, [close price, variation price, typical price]
-		awesomeIndOpt=new Option (AWESOME_SHORT_NAME,AWESOME_NAME,true,"Indicador Awesome. Usar -aws o --awesome, argumentos <timeFrameSma1> <timeFrameSma1> <Base de calculo (close,typical,variation,median)>");
+		awesomeIndOpt=new Option (AWESOME_SHORT_NAME,AWESOME_NAME,true,"Indicador Awesome. Usar -aws o --awesome, argumentos <timeFrameSma1>,<timeFrameSma2>,<Base de calculo (close,typical,variation,median)>"
+		+ "\nEjemplo -aws 5,34,close ");
 		awesomeIndOpt.setOptionalArg (true);
 		awesomeIndOpt.setArgs (AWESOME_NUMBER_OF_ARGS);
 		awesomeIndOpt.setValueSeparator (',');
 		//MACD
-		macdIndOpt=new Option (MACD_SHORT_NAME,MACD_NAME,true,"Indicador MACD. Usar -macd o --macd, argumentos <ShortTimeFrame> <LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		macdIndOpt=new Option (MACD_SHORT_NAME,MACD_NAME,true,"Indicador MACD. Usar -macd o --macd, argumentos <ShortTimeFrame>,<LongTimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		macdIndOpt.setOptionalArg (true);
 		macdIndOpt.setArgs (MACD_NUMBER_OF_ARGS);
 		macdIndOpt.setValueSeparator (',');
 		//RSI
-		rsiIndOpt=new Option (RSI_SHORT_NAME,RSI_NAME,true,"Indicador RSI. Usar -rsi o --rsi, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		rsiIndOpt=new Option (RSI_SHORT_NAME,RSI_NAME,true,"Indicador RSI. Usar -rsi o --rsi, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		rsiIndOpt.setOptionalArg (true);
 		rsiIndOpt.setArgs (RSI_NUMBER_OF_ARGS);
 		rsiIndOpt.setValueSeparator (',');
 		//EMA
-		emaIndOpt=new Option (EMA_SHORT_NAME,EMA_NAME,true,"Indicador EMA. Usar -ema o --ema, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		emaIndOpt=new Option (EMA_SHORT_NAME,EMA_NAME,true,"Indicador EMA. Usar -ema o --ema, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		emaIndOpt.setOptionalArg (true);
 		emaIndOpt.setArgs (EMA_NUMBER_OF_ARGS);
 		emaIndOpt.setValueSeparator (',');
 		//PPO
-		ppoIndOpt=new Option (PPO_SHORT_NAME,PPO_NAME,true,"Indicador PPO. Usar -ppo o --ppo, argumentos <ShortTimeFrame> <LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		ppoIndOpt=new Option (PPO_SHORT_NAME,PPO_NAME,true,"Indicador PPO. Usar -ppo o --ppo, argumentos <ShortTimeFrame>,<LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
 		ppoIndOpt.setOptionalArg (true);
 		ppoIndOpt.setArgs (PPO_NUMBER_OF_ARGS);
 		ppoIndOpt.setValueSeparator (',');
 		//ROC
-		rocIndOpt=new Option (ROC_SHORT_NAME,ROC_NAME,true,"Indicador ROC. Usar -roc o --roc, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		rocIndOpt=new Option (ROC_SHORT_NAME,ROC_NAME,true,"Indicador ROC. Usar -roc o --roc, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		rocIndOpt.setOptionalArg (true);
 		rocIndOpt.setArgs (ROC_NUMBER_OF_ARGS);
 		rocIndOpt.setValueSeparator (',');
 		//WILLIANSR
-		willIndOpt=new Option (WILL_SHORT_NAME,WILL_NAME,true,"Indicador WilliansR. Usar -will o --williansR, usa la serie original, argumentos <TimeFrame> <Base de calculo (series)>");
+		willIndOpt=new Option (WILL_SHORT_NAME,WILL_NAME,true,"Indicador WilliansR. Usar -will o --williansR, usa la serie original, argumentos <TimeFrame>,<Base de calculo (series)>");
 		willIndOpt.setOptionalArg (true);
 		willIndOpt.setArgs (WILL_NUMBER_OF_ARGS);
 		willIndOpt.setValueSeparator (',');
 		//FISHER
-		fisherIndOpt=new Option (FISHER_SHORT_NAME,FISHER_NAME,true,"Indicador Fisher. Usar -fshr o --fisher, usa generalmente median, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		fisherIndOpt=new Option (FISHER_SHORT_NAME,FISHER_NAME,true,"Indicador Fisher. Usar -fshr o --fisher, usa generalmente median, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		fisherIndOpt.setOptionalArg (true);
 		fisherIndOpt.setArgs (FISHER_NUMBER_OF_ARGS);
 		fisherIndOpt.setValueSeparator (',');
 		//HMA
-		hmaIndOpt=new Option (HMA_SHORT_NAME,HMA_NAME,true,"Indicador HMA. Usar -hma o --hma, argumentos <TimeFrame> <Base de calculo (close,typical,variation,median)>");
+		hmaIndOpt=new Option (HMA_SHORT_NAME,HMA_NAME,true,"Indicador HMA. Usar -hma o --hma, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		hmaIndOpt.setOptionalArg (true);
 		hmaIndOpt.setArgs (HMA_NUMBER_OF_ARGS);
 		hmaIndOpt.setValueSeparator (',');		
 		//RAVI
-		raviIndOpt=new Option (RAVI_SHORT_NAME,RAVI_NAME,true,"Indicador RAVI. Usar -ravi o --ravi, argumentos <ShortSmaTimeFrame> <LongSmaTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		raviIndOpt=new Option (RAVI_SHORT_NAME,RAVI_NAME,true,"Indicador RAVI. Usar -ravi o --ravi, argumentos <ShortSmaTimeFrame>,<LongSmaTimeFrame> <Base de calculo (close,typical,variation,median)>");
 		raviIndOpt.setOptionalArg (true);
 		raviIndOpt.setArgs (RAVI_NUMBER_OF_ARGS);
 		raviIndOpt.setValueSeparator (',');
@@ -288,7 +289,7 @@ public class BuildIndicators
 	    	if (cliLine.hasOption ('h')) {
 	            //automatically generate the help statement
 	            formatter=new HelpFormatter ();
-	            formatter.printHelp ("Usar TestPrePerso",options,true);
+	            formatter.printHelp ("Usar indicadores.sh ",options,true);
 	            System.exit (0);
 	        }
 	    	
