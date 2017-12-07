@@ -104,6 +104,7 @@ public class BuildIndicators
 	private String tickTime=null;
 	private final int defaultTickTime=300;//300 segundos
 	private int iTickTime=defaultTickTime;
+	private boolean verbose=false;
 	
 	private List<IndicatorArgs> indicators=null;
 	
@@ -124,7 +125,6 @@ public class BuildIndicators
 		
 		List<String[]> lines=null;
 		    
-		
 	    
 	    buildIndicators=new BuildIndicators ();
 	    
@@ -149,7 +149,7 @@ public class BuildIndicators
 	    
 	    //Se construye la serie temporal de ticks para el intervalo de tiempo especificado, por defecto 300
 		trace.info ("Calculando ticks agrupados cada "+buildIndicators.iTickTime+" segundos");
-	    buildIndicators.series=BuildSeries.exec (lines,buildIndicators.iTickTime);
+	    buildIndicators.series=BuildSeries.exec (lines,buildIndicators.iTickTime,buildIndicators.verbose);
 	    
 	    trace.info ("Generando serie a partir del precio de cierre");
 	    // Close price
@@ -185,6 +185,7 @@ public class BuildIndicators
 		Option fileInOpt=null;
 		Option fileOutOpt=null;
 		Option tickTimeOpt=null;
+		Option verboseOpt=null;
 		
 		Option awesomeIndOpt=null;
 		Option macdIndOpt=null;
@@ -208,6 +209,8 @@ public class BuildIndicators
 		//fichero de salida o stdout
 		fileOutOpt=new Option ("fout",true,"Fichero CSV a crear, si no se indica se usa la salida estandar");
 		fileOutOpt.setOptionalArg (true);
+		//Verbose
+		verboseOpt=new Option ("v","verbose",false,"Muestra el progreso en la creacion de los ticks");
 		//Tiempo del tick
 		tickTimeOpt=new Option ("ttime",true,"Tiempo con el que son creados los ticks expreado en segundos, si no se indica se toma por defecto 300 segundos");
 		tickTimeOpt.setOptionalArg (true);
@@ -277,8 +280,8 @@ public class BuildIndicators
 	    
 	    options.addOption (fileInOpt);
 	    options.addOption (fileOutOpt);
-	    
 	    options.addOption (tickTimeOpt);
+	    options.addOption (verboseOpt);
 	    
 	    options.addOption (awesomeIndOpt);
 	    options.addOption (macdIndOpt);
@@ -321,6 +324,10 @@ public class BuildIndicators
 				catch (NumberFormatException e){
 					trace.error ("El argumento -ttick se ha suministrado con un valor que no es un entero positivo");
 				}
+	    	}
+	    	
+	    	if (cliLine.hasOption ('v')){
+	    		verbose=true;
 	    	}
 	    }	    
 	    catch (ParseException e){

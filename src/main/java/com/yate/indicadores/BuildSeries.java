@@ -23,7 +23,7 @@ public class BuildSeries
 	
 	
 	
-	public static TimeSeries exec (List<String[]> lines,int tickTime)
+	public static TimeSeries exec (List<String[]> lines,int tickTime,boolean verbose)
 	{
 		int i;
 		List<Tick> ticks=null;
@@ -31,6 +31,9 @@ public class BuildSeries
 		ZonedDateTime endTime=null;
 		
 		ZonedDateTime tradeTimestamp=null;
+		
+		String aux=null;
+		int j;
 		
 		
 		if ((lines!=null)&&!lines.isEmpty ()){//Si no null y no vacio
@@ -61,17 +64,17 @@ public class BuildSeries
 				Instant endInstant=endTime.toInstant ();
 				beginTime=ZonedDateTime.ofInstant (endInstant,ZoneId.systemDefault ());
 				endTime=ZonedDateTime.ofInstant (beginInstant,ZoneId.systemDefault ());
+				
+				trace.info ("Invirtiendo el orden del fichero cargado, la fecha de la linea 0 era mayor que la de la linea "+(lines.size ()-1));
 				// Since the CSV file has the most recent trades at the top of the file, we'll reverse the list to feed the List<Tick> correctly.
 				Collections.reverse (lines);
-				
-				trace.info ("Se ha invertido el orden del fichero cargado, la fecha de la linea 0 era mayor que la de la linea "+(lines.size ()-1));
 			}
 			
 			trace.info ("Construyendo ticks vacios de "+tickTime+" segundos cada uno");
 			// Building the empty ticks (every 300 seconds, yeah welcome in Bitcoin world)
 			ticks=buildEmptyTicks (beginTime,endTime,tickTime);
 			// Filling the ticks with trades
-			trace.info ("Asignando trades a los ticks");
+			trace.info ("Asignando "+lines.size ()+" trades a "+ticks.size ()+" ticks");
 			i=0;
 			for (String[] tradeLine: lines){
 				try{
@@ -86,6 +89,18 @@ public class BuildSeries
 				catch (InternalErrorException e){
 					trace.error ("Error de formato en la linea "+i+" "+e);
 					continue;
+				}
+				
+				if (verbose){
+					if ((i%20)==0){
+						if (i!=0){
+							for (j=0;j<aux.length ();j++){
+								System.out.print ("\b");
+							}
+						}
+						aux=String.format ("Procesando %d de %d Ticks",i,lines.size ());
+						System.out.print (aux);
+					}
 				}
 				
 				i++;
