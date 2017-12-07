@@ -132,28 +132,40 @@ public class BuildIndicators
 	    	System.exit (1);
 	    }
 	    
+	    
 	    //Se carga el fichero CSV
 	    if (buildIndicators.csvInFile==null){//Recurso por defecto
+	    	trace.info ("Cargando fichero CSV por defecto (Recurso datos de test)");
 	    	lines=buildIndicators.loadCSVFromResource ();
 	    }
 	    else{//Fichero pasado como argumento
+	    	trace.info ("Cargando fichero CSV "+buildIndicators.csvInFile);
 	    	lines=buildIndicators.loadCSVFromFile (buildIndicators.csvInFile);
 	    }
 	    
+	    if (lines==null){
+	    	System.exit (2);
+	    }
+	    
 	    //Se construye la serie temporal de ticks para el intervalo de tiempo especificado, por defecto 300
+		trace.info ("Calculando ticks agrupados cada "+buildIndicators.iTickTime+" segundos");
 	    buildIndicators.series=BuildSeries.exec (lines,buildIndicators.iTickTime);
 	    
+	    trace.info ("Generando serie a partir del precio de cierre");
 	    // Close price
 	    buildIndicators.closePrice=new ClosePriceIndicator (buildIndicators.series);
+	    trace.info ("Generando serie a partir del precio tipico");
 	 	// Typical price
 	    buildIndicators.typicalPrice=new TypicalPriceIndicator (buildIndicators.series);
+	    trace.info ("Generando serie a partir de la variacion del precio");
 	 	// Price variation
 	    buildIndicators.priceVariation=new PriceVariationIndicator (buildIndicators.series);
+	    trace.info ("Generando serie a partir del precio medio");
 	    // Median price
 	    buildIndicators.medianPrice=new MedianPriceIndicator (buildIndicators.series);
 	    
 	    if (!buildIndicators.parseIndicatorArgs (args)){
-	    	System.exit (2);
+	    	System.exit (3);
 	    }
 	    
 	    buildIndicators.build (buildIndicators.csvOutFile);
@@ -521,9 +533,12 @@ public class BuildIndicators
 	   
 	        for (i=0;i<series.getTickCount();i++){
 		        strBuff=new StringBuffer ();
-		        
+		        strBuff.append (series.getTick (i).getClosePrice ()).append(',');
+		        strBuff.append (series.getTick (i).getOpenPrice ()).append(',');
+		        strBuff.append (series.getTick (i).getMinPrice ()).append(',');
+		        strBuff.append (series.getTick (i).getMaxPrice ()).append(',');
+		        strBuff.append (series.getTick (i).getAmount ()).append(',');
 		        strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
-		        //.append(closePrice.getValue(i)).append(',')
 		        //.append(typicalPrice.getValue(i)).append(',')
 		        //.append(priceVariation.getValue(i)).append(',');
 		    	for (IndicatorArgs item:indicators){
@@ -559,7 +574,6 @@ public class BuildIndicators
 			is=new FileInputStream (file);
 		}
 		catch (FileNotFoundException e){
-
 			trace.error ("Error,no se ha encontrado el fichero CSV "+file,e);
 			return null;
 		}

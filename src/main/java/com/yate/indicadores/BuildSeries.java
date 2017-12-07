@@ -44,6 +44,7 @@ public class BuildSeries
 				
 				return null;
 			}
+			trace.info ("Trade inicial "+beginTime);
 			
 			try{
 				endTime=ZonedDateTime.ofInstant (Instant.ofEpochMilli (TradeLine.getEpoch (lines.get (lines.size ()-1))),ZoneId.systemDefault ());
@@ -53,6 +54,7 @@ public class BuildSeries
 				
 				return null;
 			}
+			trace.info ("Trade final "+endTime);
 			
 			if (beginTime.isAfter (endTime)){
 				Instant beginInstant=beginTime.toInstant ();
@@ -65,9 +67,11 @@ public class BuildSeries
 				trace.info ("Se ha invertido el orden del fichero cargado, la fecha de la linea 0 era mayor que la de la linea "+(lines.size ()-1));
 			}
 			
+			trace.info ("Construyendo ticks vacios de "+tickTime+" segundos cada uno");
 			// Building the empty ticks (every 300 seconds, yeah welcome in Bitcoin world)
-			ticks=buildEmptyTicks (beginTime,endTime,300);
+			ticks=buildEmptyTicks (beginTime,endTime,tickTime);
 			// Filling the ticks with trades
+			trace.info ("Asignando trades a los ticks");
 			i=0;
 			for (String[] tradeLine: lines){
 				try{
