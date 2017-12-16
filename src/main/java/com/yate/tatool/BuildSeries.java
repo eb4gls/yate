@@ -1,4 +1,4 @@
-package com.yate.indicadores;
+package com.yate.tatool;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -9,13 +9,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ta4j.core.BaseTick;
+import org.ta4j.core.BaseTimeSeries;
+import org.ta4j.core.Tick;
+import org.ta4j.core.TimeSeries;
 
 import com.yate.indicadores.Exceptions.InternalErrorException;
 
-import eu.verdelhan.ta4j.BaseTick;
-import eu.verdelhan.ta4j.BaseTimeSeries;
-import eu.verdelhan.ta4j.Tick;
-import eu.verdelhan.ta4j.TimeSeries;
+
 
 public class BuildSeries
 {

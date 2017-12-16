@@ -1,7 +1,7 @@
-package com.yate.indicadores;
+package com.yate.tatool;
 
-import eu.verdelhan.ta4j.Decimal;
-import eu.verdelhan.ta4j.indicators.CachedIndicator;
+import org.ta4j.core.Decimal;
+import org.ta4j.core.indicators.CachedIndicator;
 
 public class IndicatorArgs
 {

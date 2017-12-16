@@ -1,4 +1,4 @@
-package com.yate.indicadores;
+package com.yate.tatool;
 
 
 
@@ -22,28 +22,33 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.ta4j.core.Decimal;
+import org.ta4j.core.Indicator;
+import org.ta4j.core.TimeSeries;
+import org.ta4j.core.indicators.AwesomeOscillatorIndicator;
+import org.ta4j.core.indicators.CachedIndicator;
+import org.ta4j.core.indicators.EMAIndicator;
+import org.ta4j.core.indicators.FisherIndicator;
+import org.ta4j.core.indicators.HMAIndicator;
+import org.ta4j.core.indicators.MACDIndicator;
+import org.ta4j.core.indicators.PPOIndicator;
+import org.ta4j.core.indicators.RAVIIndicator;
+import org.ta4j.core.indicators.ROCIndicator;
+import org.ta4j.core.indicators.RSIIndicator;
+import org.ta4j.core.indicators.WilliamsRIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.helpers.MedianPriceIndicator;
+import org.ta4j.core.indicators.helpers.PriceVariationIndicator;
+import org.ta4j.core.indicators.helpers.TypicalPriceIndicator;
 
 import com.opencsv.CSVReader;
 import com.yate.indicadores.Exceptions.InternalErrorException;
+import com.yate.ta4j.indicadores.MFIIndicator;
+import com.yate.ta4j.indicadores.MyBollingerBandsLowerIndicator;
+import com.yate.ta4j.indicadores.MyBollingerBandsMiddleIndicator;
+import com.yate.ta4j.indicadores.MyBollingerBandsUpperIndicator;
 
-import eu.verdelhan.ta4j.Decimal;
-import eu.verdelhan.ta4j.Indicator;
-import eu.verdelhan.ta4j.TimeSeries;
-import eu.verdelhan.ta4j.indicators.AwesomeOscillatorIndicator;
-import eu.verdelhan.ta4j.indicators.CachedIndicator;
-import eu.verdelhan.ta4j.indicators.EMAIndicator;
-import eu.verdelhan.ta4j.indicators.FisherIndicator;
-import eu.verdelhan.ta4j.indicators.HMAIndicator;
-import eu.verdelhan.ta4j.indicators.MACDIndicator;
-import eu.verdelhan.ta4j.indicators.PPOIndicator;
-import eu.verdelhan.ta4j.indicators.RAVIIndicator;
-import eu.verdelhan.ta4j.indicators.ROCIndicator;
-import eu.verdelhan.ta4j.indicators.RSIIndicator;
-import eu.verdelhan.ta4j.indicators.WilliamsRIndicator;
-import eu.verdelhan.ta4j.indicators.helpers.ClosePriceIndicator;
-import eu.verdelhan.ta4j.indicators.helpers.MedianPriceIndicator;
-import eu.verdelhan.ta4j.indicators.helpers.PriceVariationIndicator;
-import eu.verdelhan.ta4j.indicators.helpers.TypicalPriceIndicator;
+
 
 
 
@@ -57,46 +62,7 @@ public class BuildIndicators
 	
 	
 	
-	static private final int AWESOME_NUMBER_OF_ARGS=3;
-	static private final String AWESOME_SHORT_NAME="aws";
-	static private final String AWESOME_NAME="awesome";
 	
-	
-	static private final int MACD_NUMBER_OF_ARGS=3;
-	static private final String MACD_SHORT_NAME="macd";
-	static private final String MACD_NAME="macd";
-	
-	static private final int RSI_NUMBER_OF_ARGS=2;
-	static private final String RSI_SHORT_NAME="rsi";
-	static private final String RSI_NAME="rsi";
-	
-	static private final int EMA_NUMBER_OF_ARGS=2;
-	static private final String EMA_SHORT_NAME="ema";
-	static private final String EMA_NAME="ema";
-	
-	static private final int PPO_NUMBER_OF_ARGS=3;
-	static private final String PPO_SHORT_NAME="ppo";
-	static private final String PPO_NAME="ppo";
-	
-	static private final int ROC_NUMBER_OF_ARGS=2;
-	static private final String ROC_SHORT_NAME="roc";
-	static private final String ROC_NAME="roc";
-	
-	static private final int WILL_NUMBER_OF_ARGS=2;
-	static private final String WILL_SHORT_NAME="will";
-	static private final String WILL_NAME="williansr";
-	
-	static private final int FISHER_NUMBER_OF_ARGS=2;
-	static private final String FISHER_SHORT_NAME="fshr";
-	static private final String FISHER_NAME="fisher";
-	
-	static private final int HMA_NUMBER_OF_ARGS=2;
-	static private final String HMA_SHORT_NAME="hma";
-	static private final String HMA_NAME="hma";
-	
-	static private final int RAVI_NUMBER_OF_ARGS=3;
-	static private final String RAVI_SHORT_NAME="ravi";
-	static private final String RAVI_NAME="ravi";
 	
 	//Argumentos de la linea de comando
 	private String csvInFile=null;
@@ -105,6 +71,10 @@ public class BuildIndicators
 	private final int defaultTickTime=300;//300 segundos
 	private int iTickTime=defaultTickTime;
 	private boolean verbose=false;
+	
+	private boolean tickSize=false;
+	private boolean tickVolume=false;
+	private TimeFormat timeFormat=null;
 	
 	private List<IndicatorArgs> indicators=null;
 	
@@ -187,6 +157,10 @@ public class BuildIndicators
 		Option tickTimeOpt=null;
 		Option verboseOpt=null;
 		
+		Option tickSizeOpt=null;
+		Option tickVolumeOpt=null;
+		Option timeFormatOpt=null;
+		
 		Option awesomeIndOpt=null;
 		Option macdIndOpt=null;
 		Option rsiIndOpt=null;
@@ -197,6 +171,10 @@ public class BuildIndicators
 		Option fisherIndOpt=null;
 		Option hmaIndOpt=null;
 		Option raviIndOpt=null;
+		Option mfiIndOpt=null;
+		Option bollMidIndOpt=null;
+		Option bollUpperIndOpt=null;
+		Option bollLowerIndOpt=null;
 		
 		
 	
@@ -215,64 +193,88 @@ public class BuildIndicators
 		tickTimeOpt=new Option ("ttime",true,"Tiempo con el que son creados los ticks expreado en segundos, si no se indica se toma por defecto 300 segundos");
 		tickTimeOpt.setOptionalArg (true);
 		tickTimeOpt.setType (Integer.class);
+		
+		tickSizeOpt=new Option ("ts","ticksize",false,"Vuelca el numero de trades que contiene cada tick");
+		tickVolumeOpt=new Option ("tv","tickvolume",false,"Vuelca el volumen acumulado para el tick");
+		timeFormatOpt=new Option ("tf","timeformat",true,"Vuelca el tiempo en el formato indicado (Format o Epoch)");
+		timeFormatOpt.setArgs (1);
+		timeFormatOpt.setValueSeparator (',');
 	
 		//Indicadores
 		//Awesome, 3 argumentos: p1, p2, [close price, variation price, typical price]
-		awesomeIndOpt=new Option (AWESOME_SHORT_NAME,AWESOME_NAME,true,"Indicador Awesome. Usar -aws o --awesome, argumentos <timeFrameSma1>,<timeFrameSma2>,<Base de calculo (close,typical,variation,median)>"
+		awesomeIndOpt=new Option (IndicatorDef.AWESOME_SHORT_NAME,IndicatorDef.AWESOME_NAME,true,"Indicador Awesome. Usar -aws o --awesome. argumentos: <timeFrameSma1>,<timeFrameSma2>,<Base de calculo (close,typical,variation,median)>"
 		+ "\nEjemplo -aws 5,34,close ");
 		awesomeIndOpt.setOptionalArg (true);
-		awesomeIndOpt.setArgs (AWESOME_NUMBER_OF_ARGS);
+		awesomeIndOpt.setArgs (IndicatorDef.AWESOME_NUMBER_OF_ARGS);
 		awesomeIndOpt.setValueSeparator (',');
 		//MACD
-		macdIndOpt=new Option (MACD_SHORT_NAME,MACD_NAME,true,"Indicador MACD. Usar -macd o --macd, argumentos <ShortTimeFrame>,<LongTimeFrame>,<Base de calculo (close,typical,variation,median)>");
+		macdIndOpt=new Option (IndicatorDef.MACD_SHORT_NAME,IndicatorDef.MACD_NAME,true,"Indicador MACD. Usar -macd o --macd. argumentos: <ShortTimeFrame>,<LongTimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		macdIndOpt.setOptionalArg (true);
-		macdIndOpt.setArgs (MACD_NUMBER_OF_ARGS);
+		macdIndOpt.setArgs (IndicatorDef.MACD_NUMBER_OF_ARGS);
 		macdIndOpt.setValueSeparator (',');
 		//RSI
-		rsiIndOpt=new Option (RSI_SHORT_NAME,RSI_NAME,true,"Indicador RSI. Usar -rsi o --rsi, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
+		rsiIndOpt=new Option (IndicatorDef.RSI_SHORT_NAME,IndicatorDef.RSI_NAME,true,"Indicador RSI. Usar -rsi o --rsi. argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		rsiIndOpt.setOptionalArg (true);
-		rsiIndOpt.setArgs (RSI_NUMBER_OF_ARGS);
+		rsiIndOpt.setArgs (IndicatorDef.RSI_NUMBER_OF_ARGS);
 		rsiIndOpt.setValueSeparator (',');
 		//EMA
-		emaIndOpt=new Option (EMA_SHORT_NAME,EMA_NAME,true,"Indicador EMA. Usar -ema o --ema, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
+		emaIndOpt=new Option (IndicatorDef.EMA_SHORT_NAME,IndicatorDef.EMA_NAME,true,"Indicador EMA. Usar -ema o --ema. argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		emaIndOpt.setOptionalArg (true);
-		emaIndOpt.setArgs (EMA_NUMBER_OF_ARGS);
+		emaIndOpt.setArgs (IndicatorDef.EMA_NUMBER_OF_ARGS);
 		emaIndOpt.setValueSeparator (',');
 		//PPO
-		ppoIndOpt=new Option (PPO_SHORT_NAME,PPO_NAME,true,"Indicador PPO. Usar -ppo o --ppo, argumentos <ShortTimeFrame>,<LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		ppoIndOpt=new Option (IndicatorDef.PPO_SHORT_NAME,IndicatorDef.PPO_NAME,true,"Indicador PPO. Usar -ppo o --ppo. argumentos: <ShortTimeFrame>,<LongTimeFrame> <Base de calculo (close,typical,variation,median)>");
 		ppoIndOpt.setOptionalArg (true);
-		ppoIndOpt.setArgs (PPO_NUMBER_OF_ARGS);
+		ppoIndOpt.setArgs (IndicatorDef.PPO_NUMBER_OF_ARGS);
 		ppoIndOpt.setValueSeparator (',');
 		//ROC
-		rocIndOpt=new Option (ROC_SHORT_NAME,ROC_NAME,true,"Indicador ROC. Usar -roc o --roc, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
+		rocIndOpt=new Option (IndicatorDef.ROC_SHORT_NAME,IndicatorDef.ROC_NAME,true,"Indicador ROC. Usar -roc o --roc. argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		rocIndOpt.setOptionalArg (true);
-		rocIndOpt.setArgs (ROC_NUMBER_OF_ARGS);
+		rocIndOpt.setArgs (IndicatorDef.ROC_NUMBER_OF_ARGS);
 		rocIndOpt.setValueSeparator (',');
 		//WILLIANSR
-		willIndOpt=new Option (WILL_SHORT_NAME,WILL_NAME,true,"Indicador WilliansR. Usar -will o --williansR, usa la serie original, argumentos <TimeFrame>,<Base de calculo (series)>");
+		willIndOpt=new Option (IndicatorDef.WILL_SHORT_NAME,IndicatorDef.WILL_NAME,true,"Indicador WilliansR. Usar -will o --williansR. usa la serie original, argumentos: <TimeFrame>,<Base de calculo (series)>");
 		willIndOpt.setOptionalArg (true);
-		willIndOpt.setArgs (WILL_NUMBER_OF_ARGS);
+		willIndOpt.setArgs (IndicatorDef.WILL_NUMBER_OF_ARGS);
 		willIndOpt.setValueSeparator (',');
 		//FISHER
-		fisherIndOpt=new Option (FISHER_SHORT_NAME,FISHER_NAME,true,"Indicador Fisher. Usar -fshr o --fisher, usa generalmente median, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
+		fisherIndOpt=new Option (IndicatorDef.FISHER_SHORT_NAME,IndicatorDef.FISHER_NAME,true,"Indicador Fisher. Usar -fshr o --fisher. usa generalmente median, argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		fisherIndOpt.setOptionalArg (true);
-		fisherIndOpt.setArgs (FISHER_NUMBER_OF_ARGS);
+		fisherIndOpt.setArgs (IndicatorDef.FISHER_NUMBER_OF_ARGS);
 		fisherIndOpt.setValueSeparator (',');
 		//HMA
-		hmaIndOpt=new Option (HMA_SHORT_NAME,HMA_NAME,true,"Indicador HMA. Usar -hma o --hma, argumentos <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
+		hmaIndOpt=new Option (IndicatorDef.HMA_SHORT_NAME,IndicatorDef.HMA_NAME,true,"Indicador HMA. Usar -hma o --hma. argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>");
 		hmaIndOpt.setOptionalArg (true);
-		hmaIndOpt.setArgs (HMA_NUMBER_OF_ARGS);
+		hmaIndOpt.setArgs (IndicatorDef.HMA_NUMBER_OF_ARGS);
 		hmaIndOpt.setValueSeparator (',');		
 		//RAVI
-		raviIndOpt=new Option (RAVI_SHORT_NAME,RAVI_NAME,true,"Indicador RAVI. Usar -ravi o --ravi, argumentos <ShortSmaTimeFrame>,<LongSmaTimeFrame> <Base de calculo (close,typical,variation,median)>");
+		raviIndOpt=new Option (IndicatorDef.RAVI_SHORT_NAME,IndicatorDef.RAVI_NAME,true,"Indicador RAVI. Usar -ravi o --ravi. argumentos: <ShortSmaTimeFrame>,<LongSmaTimeFrame> <Base de calculo (close,typical,variation,median)>");
 		raviIndOpt.setOptionalArg (true);
-		raviIndOpt.setArgs (RAVI_NUMBER_OF_ARGS);
+		raviIndOpt.setArgs (IndicatorDef.RAVI_NUMBER_OF_ARGS);
 		raviIndOpt.setValueSeparator (',');
+		//MFI
+		mfiIndOpt=new Option (IndicatorDef.MFI_SHORT_NAME,IndicatorDef.MFI_NAME,true,"Indicador MFI. Usar -mfi o --moneyflowindicator. argumentos: <TimeFrame>,<Base de calculo (series)>");
+		mfiIndOpt.setOptionalArg (true);
+		mfiIndOpt.setArgs (IndicatorDef.MFI_NUMBER_OF_ARGS);
+		mfiIndOpt.setValueSeparator (',');
+		//BollingerMiddle
+		bollMidIndOpt=new Option (IndicatorDef.BOLLINGERMID_SHORT_NAME,IndicatorDef.BOLLINGERMID_NAME,true,"Indicador Bollinger Middle. Usar -bom o --bollingermid. Argumentos: <TimeFrame (se recomienda 20)> <Base de calculo (close,typical,variation,median)>");
+		bollMidIndOpt.setOptionalArg (true);
+		bollMidIndOpt.setArgs (IndicatorDef.BOLLINGERMID_NUMBER_OF_ARGS);
+		bollMidIndOpt.setValueSeparator (',');		
+		//BollingerUpper
+		bollUpperIndOpt=new Option (IndicatorDef.BOLLINGERLOWER_SHORT_NAME,IndicatorDef.BOLLINGERLOWER_NAME,true,"Indicador Bollinger Lower. Usar -bol o --bollingerlower. Argumentos: <TimeFrame (se recomienda 20)> <Base de calculo (close,typical,variation,median)>");
+		bollUpperIndOpt.setOptionalArg (true);
+		bollUpperIndOpt.setArgs (IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS);
+		bollUpperIndOpt.setValueSeparator (',');
+		//BollingerLower
+		bollLowerIndOpt=new Option (IndicatorDef.BOLLINGERUPPER_SHORT_NAME,IndicatorDef.BOLLINGERUPPER_NAME,true,"Indicador Bollinger Upper. Usar -bou o --bollingerupper. Argumentos: <TimeFrame (se recomienda 20)> <Base de calculo (close,typical,variation,median)>");
+		bollLowerIndOpt.setOptionalArg (true);
+		bollLowerIndOpt.setArgs (IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS);
+		bollLowerIndOpt.setValueSeparator (',');
 
-		
-		
 
-		
+
 		
 	    options=new Options ();
 
@@ -282,6 +284,10 @@ public class BuildIndicators
 	    options.addOption (fileOutOpt);
 	    options.addOption (tickTimeOpt);
 	    options.addOption (verboseOpt);
+	    
+	    options.addOption (tickSizeOpt);
+	    options.addOption (tickVolumeOpt);
+	    options.addOption (timeFormatOpt);
 	    
 	    options.addOption (awesomeIndOpt);
 	    options.addOption (macdIndOpt);
@@ -293,8 +299,10 @@ public class BuildIndicators
 	    options.addOption (fisherIndOpt);
 	    options.addOption (hmaIndOpt);
 	    options.addOption (raviIndOpt);
-	    
-	    
+	    options.addOption (mfiIndOpt);
+	    options.addOption (bollMidIndOpt);
+	    options.addOption (bollLowerIndOpt);
+	    options.addOption (bollUpperIndOpt);
 	  
 	    cliParser=new GnuParser ();
 	    try{
@@ -342,63 +350,99 @@ public class BuildIndicators
 	private boolean parseIndicatorArgs (String[] args)
 	{
 		String []IndicatorArgs=null;
+
 		
 		
-	   
 		//Indicadores
 		indicators=new ArrayList<IndicatorArgs> ();
 
 		try{
+			//Tamaño del tick en trades
+			if (cliLine.hasOption ("ts")){
+				tickSize=true;
+			}
+			
+			//Volumen acumulado para el tick
+			if (cliLine.hasOption ("tv")){
+				tickVolume=true;
+			}
+			
+			//Formato del tiempo
+			if (cliLine.hasOption ("tf")){
+				timeFormat=TimeFormat.getTimeFormat (cliLine.getOptionValues ("tf")[0]);
+			}
+			
 			//AWESOME
-			if (cliLine.hasOption (AWESOME_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (AWESOME_NAME);
-				buildIndicatorInstance (AwesomeOscillatorIndicator.class,AWESOME_NAME,IndicatorArgs,AWESOME_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.AWESOME_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.AWESOME_NAME);
+				buildIndicatorInstance (AwesomeOscillatorIndicator.class,IndicatorDef.AWESOME_NAME,IndicatorArgs,IndicatorDef.AWESOME_NUMBER_OF_ARGS);
 			}
 			//RSI
-			if (cliLine.hasOption (RSI_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (RSI_NAME);
-				buildIndicatorInstance (RSIIndicator.class,RSI_NAME,IndicatorArgs,RSI_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.RSI_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.RSI_NAME);
+				buildIndicatorInstance (RSIIndicator.class,IndicatorDef.RSI_NAME,IndicatorArgs,IndicatorDef.RSI_NUMBER_OF_ARGS);
 			}
 			//MACD
-			if (cliLine.hasOption (MACD_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (MACD_NAME);
-				buildIndicatorInstance (MACDIndicator.class,MACD_NAME,IndicatorArgs,MACD_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.MACD_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.MACD_NAME);
+				buildIndicatorInstance (MACDIndicator.class,IndicatorDef.MACD_NAME,IndicatorArgs,IndicatorDef.MACD_NUMBER_OF_ARGS);
 			}
 			//EMA
-			if (cliLine.hasOption (EMA_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (EMA_NAME);
-				buildIndicatorInstance (EMAIndicator.class,EMA_NAME,IndicatorArgs,EMA_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.EMA_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.EMA_NAME);
+				buildIndicatorInstance (EMAIndicator.class,IndicatorDef.EMA_NAME,IndicatorArgs,IndicatorDef.EMA_NUMBER_OF_ARGS);
 			}
 			//PPO
-			if (cliLine.hasOption (PPO_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (PPO_NAME);
-				buildIndicatorInstance (PPOIndicator.class,PPO_NAME,IndicatorArgs,PPO_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.PPO_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.PPO_NAME);
+				buildIndicatorInstance (PPOIndicator.class,IndicatorDef.PPO_NAME,IndicatorArgs,IndicatorDef.PPO_NUMBER_OF_ARGS);
 			}
 			//ROC
-			if (cliLine.hasOption (ROC_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (ROC_NAME);
-				buildIndicatorInstance (ROCIndicator.class,ROC_NAME,IndicatorArgs,ROC_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.ROC_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.ROC_NAME);
+				buildIndicatorInstance (ROCIndicator.class,IndicatorDef.ROC_NAME,IndicatorArgs,IndicatorDef.ROC_NUMBER_OF_ARGS);
 			}
 			//Willians R
-			if (cliLine.hasOption (WILL_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (WILL_NAME);
-				buildIndicatorInstance (WilliamsRIndicator.class,WILL_NAME,IndicatorArgs,WILL_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.WILL_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.WILL_NAME);
+				buildIndicatorInstance (WilliamsRIndicator.class,IndicatorDef.WILL_NAME,IndicatorArgs,IndicatorDef.WILL_NUMBER_OF_ARGS);
 			}
 			//Fisher
-			if (cliLine.hasOption (FISHER_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (FISHER_NAME);
-				buildIndicatorInstance (FisherIndicator.class,FISHER_NAME,IndicatorArgs,FISHER_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.FISHER_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.FISHER_NAME);
+				buildIndicatorInstance (FisherIndicator.class,IndicatorDef.FISHER_NAME,IndicatorArgs,IndicatorDef.FISHER_NUMBER_OF_ARGS);
 			}
 			//HMAIndicator
-			if (cliLine.hasOption (HMA_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (HMA_NAME);
-				buildIndicatorInstance (HMAIndicator.class,HMA_NAME,IndicatorArgs,HMA_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.HMA_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.HMA_NAME);
+				buildIndicatorInstance (HMAIndicator.class,IndicatorDef.HMA_NAME,IndicatorArgs,IndicatorDef.HMA_NUMBER_OF_ARGS);
 			}
 			//RAVI
-			if (cliLine.hasOption (RAVI_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (RAVI_NAME);
-				buildIndicatorInstance (RAVIIndicator.class,RAVI_NAME,IndicatorArgs,RAVI_NUMBER_OF_ARGS);
+			if (cliLine.hasOption (IndicatorDef.RAVI_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.RAVI_NAME);
+				buildIndicatorInstance (RAVIIndicator.class,IndicatorDef.RAVI_NAME,IndicatorArgs,IndicatorDef.RAVI_NUMBER_OF_ARGS);
 			}
+			//MFI
+			if (cliLine.hasOption (IndicatorDef.MFI_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.MFI_NAME);
+				buildIndicatorInstance (MFIIndicator.class,IndicatorDef.MFI_NAME,IndicatorArgs,IndicatorDef.MFI_NUMBER_OF_ARGS);
+			}
+			//BollingerMid
+			if (cliLine.hasOption (IndicatorDef.BOLLINGERMID_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.BOLLINGERMID_NAME);
+				buildIndicatorInstance (MyBollingerBandsMiddleIndicator.class,IndicatorDef.BOLLINGERMID_NAME,IndicatorArgs,IndicatorDef.BOLLINGERMID_NUMBER_OF_ARGS);
+			}
+			//BollingerLower
+			if (cliLine.hasOption (IndicatorDef.BOLLINGERLOWER_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.BOLLINGERLOWER_NAME);
+				buildIndicatorInstance (MyBollingerBandsLowerIndicator.class,IndicatorDef.BOLLINGERLOWER_NAME,IndicatorArgs,IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS);
+			}
+			//BollingerUpper
+			if (cliLine.hasOption (IndicatorDef.BOLLINGERUPPER_NAME)){
+				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.BOLLINGERUPPER_NAME);
+				buildIndicatorInstance (MyBollingerBandsUpperIndicator.class,IndicatorDef.BOLLINGERUPPER_NAME,IndicatorArgs,IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS);
+			}
+
 		}
 		catch (InternalErrorException e){
 			trace.error ("Error instanciando indicadores ",e);
@@ -412,6 +456,15 @@ public class BuildIndicators
 	
 	
 	//private <I extends CachedIndicator<Decimal>> boolean buildIndicatorInstance (Class<I> clazz,String name,String []IndicatorArgs,int nUnitArgs)
+	/**
+	 * Instancia indicadores que proveen un constructor de la forma: indicador del tipo cachedIndicator, y una serie de argumentos int.
+	 * 
+	 * @param clazz
+	 * @param name
+	 * @param IndicatorArgs
+	 * @param nUnitArgs
+	 * @throws InternalErrorException
+	 */
 	@SuppressWarnings("unchecked")
 	private void buildIndicatorInstance (Class<?> clazz,String name,String []IndicatorArgs,int nUnitArgs)
 	throws InternalErrorException
@@ -544,8 +597,25 @@ public class BuildIndicators
 		        strBuff.append (series.getTick (i).getOpenPrice ()).append(',');
 		        strBuff.append (series.getTick (i).getMinPrice ()).append(',');
 		        strBuff.append (series.getTick (i).getMaxPrice ()).append(',');
-		        strBuff.append (series.getTick (i).getAmount ()).append(',');
-		        strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
+		        if (tickVolume){
+		        	strBuff.append (series.getTick (i).getAmount ()).append(',');
+		        }
+		        if (tickSize){
+		        	strBuff.append (series.getTick (i).getTrades ()).append(',');
+		        }
+		        if (timeFormat!=null){
+		        	switch (timeFormat){
+					case EPOCH:
+						strBuff.append (series.getTick(i).getEndTime().toEpochSecond ()).append(',');
+						break;
+					case FORMAT:
+						strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
+						break;
+					default:
+						break;
+		        	
+		        	}
+		        }
 		        //.append(typicalPrice.getValue(i)).append(',')
 		        //.append(priceVariation.getValue(i)).append(',');
 		    	for (IndicatorArgs item:indicators){
