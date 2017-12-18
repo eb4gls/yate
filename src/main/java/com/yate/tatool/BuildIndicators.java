@@ -25,33 +25,14 @@ import org.apache.log4j.Logger;
 import org.ta4j.core.Decimal;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.TimeSeries;
-import org.ta4j.core.indicators.AwesomeOscillatorIndicator;
 import org.ta4j.core.indicators.CachedIndicator;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.FisherIndicator;
-import org.ta4j.core.indicators.HMAIndicator;
-import org.ta4j.core.indicators.MACDIndicator;
-import org.ta4j.core.indicators.PPOIndicator;
-import org.ta4j.core.indicators.RAVIIndicator;
-import org.ta4j.core.indicators.ROCIndicator;
-import org.ta4j.core.indicators.RSIIndicator;
-import org.ta4j.core.indicators.SMAIndicator;
-import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
-import org.ta4j.core.indicators.StochasticRSIIndicator;
-import org.ta4j.core.indicators.WilliamsRIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.MedianPriceIndicator;
 import org.ta4j.core.indicators.helpers.PriceVariationIndicator;
 import org.ta4j.core.indicators.helpers.TypicalPriceIndicator;
-import org.ta4j.core.indicators.volume.NVIIndicator;
-import org.ta4j.core.indicators.volume.PVIIndicator;
 
 import com.opencsv.CSVReader;
 import com.yate.indicadores.Exceptions.InternalErrorException;
-import com.yate.ta4j.indicadores.MFIIndicator;
-import com.yate.ta4j.indicadores.MyBollingerBandsLowerIndicator;
-import com.yate.ta4j.indicadores.MyBollingerBandsMiddleIndicator;
-import com.yate.ta4j.indicadores.MyBollingerBandsUpperIndicator;
 
 
 
@@ -83,7 +64,6 @@ public class BuildIndicators
 	private boolean tickMaxPrice=false;
 	private boolean tickSize=false;
 	private boolean tickVolume=false;
-	private boolean tradePerSecond=false;
 	private boolean volumePerTrade=false;
 	private TimeFormat timeFormat=null;
 	
@@ -188,7 +168,6 @@ public class BuildIndicators
 		Option tickMinPriceOpt=null;
 		Option tickMaxPriceOpt=null;
 		Option tickSizeOpt=null;
-		Option tradesPerSecondOpt=null;
 		Option tickVolumeOpt=null;
 		Option VolumePerTradeOpt=null;
 		Option timeFormatOpt=null;
@@ -209,9 +188,12 @@ public class BuildIndicators
 		Option bollUpperIndOpt=null;
 		Option bollLowerIndOpt=null;
 		Option stochsaticKIndOpt=null;
+		Option stochsaticDIndOpt=null;
 		Option stochsaticRSIIndOpt=null;
 		Option pviIndOpt=null;
 		Option nviIndOpt=null;
+		Option mvwapIndOpt=null;
+		Option vwapIndOpt=null;
 		
 		
 	
@@ -237,7 +219,6 @@ public class BuildIndicators
 		tickMaxPriceOpt=new Option ("txp","tickmaxprice",false,"Precio maximo del Tick");
 		
 		tickSizeOpt=new Option ("ts","ticksize",false,"Vuelca el numero de trades que contiene cada tick");
-		tradesPerSecondOpt=new Option ("tps","tradepersecond",false,"Vuelca el numero de trades por segundo en el Tick calculado");
 		tickVolumeOpt=new Option ("tv","tickvolume",false,"Vuelca el volumen acumulado para el tick");
 		VolumePerTradeOpt=new Option ("vpt","volumepertrade",false,"Vuelca el volumen medio por trade en el tick calculado");
 		timeFormatOpt=new Option ("tf","timeformat",true,"Vuelca el tiempo en el formato indicado (Format o Epoch)");
@@ -275,14 +256,21 @@ public class BuildIndicators
 		bollUpperIndOpt=addIndicatorToArgs (IndicatorDef.BOLLINGERLOWER_SHORT_NAME,IndicatorDef.BOLLINGERLOWER_NAME,IndicatorDef.BOLLINGERLOWER_DESCRIPTION,IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS);
 		//BollingerLower
 		bollLowerIndOpt=addIndicatorToArgs (IndicatorDef.BOLLINGERUPPER_SHORT_NAME,IndicatorDef.BOLLINGERUPPER_NAME,IndicatorDef.BOLLINGERUPPER_DESCRIPTION,IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS);
-		//StochasticK
+		//Stochastic K
 		stochsaticKIndOpt=addIndicatorToArgs (IndicatorDef.STOCHASTIC_K_SHORT_NAME,IndicatorDef.STOCHASTIC_K_NAME,IndicatorDef.STOCHASTIC_K_DESCRIPTION,IndicatorDef.STOCHASTIC_K_NUMBER_OF_ARGS);
+		//Stochastic D
+		stochsaticDIndOpt=addIndicatorToArgs (IndicatorDef.STOCHASTIC_D_SHORT_NAME,IndicatorDef.STOCHASTIC_D_NAME,IndicatorDef.STOCHASTIC_D_DESCRIPTION,IndicatorDef.STOCHASTIC_D_NUMBER_OF_ARGS);
 		//StochasticRSI
 		stochsaticRSIIndOpt=addIndicatorToArgs (IndicatorDef.STOCHASTIC_RSI_SHORT_NAME,IndicatorDef.STOCHASTIC_RSI_NAME,IndicatorDef.STOCHASTIC_RSI_DESCRIPTION,IndicatorDef.STOCHASTIC_RSI_NUMBER_OF_ARGS);
 		//PVI - Positive Value Index
 		pviIndOpt=addIndicatorToArgs (IndicatorDef.POSITIVE_VOLUME_INDEX_SHORT_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_DESCRIPTION,IndicatorDef.POSITIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
 		//NVI - Negative Value Index
 		nviIndOpt=addIndicatorToArgs (IndicatorDef.NEGATIVE_VOLUME_INDEX_SHORT_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_DESCRIPTION,IndicatorDef.NEGATIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
+		//MVWAP Moving Volume Weighted Average Price
+		mvwapIndOpt=addIndicatorToArgs (IndicatorDef.MVWAP_SHORT_NAME,IndicatorDef.MVWAP_NAME,IndicatorDef.MVWAP_DESCRIPTION,IndicatorDef.MVWAP_NUMBER_OF_ARGS);
+		//VWAP Volume Weighted Average Price
+		vwapIndOpt=addIndicatorToArgs (IndicatorDef.VWAP_SHORT_NAME,IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_DESCRIPTION,IndicatorDef.VWAP_NUMBER_OF_ARGS);
+				
 		
 	    options=new Options ();
 
@@ -298,7 +286,6 @@ public class BuildIndicators
 	    options.addOption (tickMinPriceOpt);
 	    options.addOption (tickMaxPriceOpt);
 	    options.addOption (tickSizeOpt);
-	    options.addOption (tradesPerSecondOpt);
 	    options.addOption (tickVolumeOpt);
 	    options.addOption (VolumePerTradeOpt);
 	    options.addOption (timeFormatOpt);
@@ -319,9 +306,13 @@ public class BuildIndicators
 	    options.addOption (bollLowerIndOpt);
 	    options.addOption (bollUpperIndOpt);
 	    options.addOption (stochsaticKIndOpt);
+	    options.addOption (stochsaticDIndOpt);
 	    options.addOption (stochsaticRSIIndOpt);
 	    options.addOption (pviIndOpt);
 	    options.addOption (nviIndOpt);
+	    options.addOption (mvwapIndOpt);
+	    options.addOption (vwapIndOpt);
+	    
 	    
 	  
 	    cliParser=new GnuParser ();
@@ -379,10 +370,6 @@ public class BuildIndicators
 			if (cliLine.hasOption ("ts")){
 				tickSize=true;
 			}
-			//Trades por segundo
-			if (cliLine.hasOption ("tps")){
-				tradePerSecond=true;
-			}
 			
 			//Volumen acumulado para el tick
 			if (cliLine.hasOption ("tv")){
@@ -407,111 +394,68 @@ public class BuildIndicators
 	}
 	
 	
-	private boolean parseIndicatorArgs (String[] args)
+	private void addIndicatorToExecution (String name,int argc,Class<?> clazz)
+	throws InternalErrorException
 	{
 		String []IndicatorArgs=null;
-
 		
-		
+		if (cliLine.hasOption (name)){
+			IndicatorArgs=cliLine.getOptionValues (name);
+			buildIndicatorInstance (clazz,name,IndicatorArgs,argc);
+		}
+	}
+	
+	
+	private boolean parseIndicatorArgs (String[] args)
+	{
 		//Indicadores
 		indicators=new ArrayList<IndicatorArgs> ();
 
 		try{
 			//AWESOME
-			if (cliLine.hasOption (IndicatorDef.AWESOME_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.AWESOME_NAME);
-				buildIndicatorInstance (AwesomeOscillatorIndicator.class,IndicatorDef.AWESOME_NAME,IndicatorArgs,IndicatorDef.AWESOME_NUMBER_OF_ARGS);
-			}
-			//RSI
-			if (cliLine.hasOption (IndicatorDef.RSI_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.RSI_NAME);
-				buildIndicatorInstance (RSIIndicator.class,IndicatorDef.RSI_NAME,IndicatorArgs,IndicatorDef.RSI_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.AWESOME_NAME,IndicatorDef.AWESOME_NUMBER_OF_ARGS,IndicatorDef.AWESOME_CLASS);
 			//MACD
-			if (cliLine.hasOption (IndicatorDef.MACD_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.MACD_NAME);
-				buildIndicatorInstance (MACDIndicator.class,IndicatorDef.MACD_NAME,IndicatorArgs,IndicatorDef.MACD_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.MACD_NAME,IndicatorDef.MACD_NUMBER_OF_ARGS,IndicatorDef.MACD_CLASS);
+			//RSI
+			addIndicatorToExecution (IndicatorDef.RSI_NAME,IndicatorDef.RSI_NUMBER_OF_ARGS,IndicatorDef.RSI_CLASS);
 			//EMA - Exponentical Moving Average
-			if (cliLine.hasOption (IndicatorDef.EMA_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.EMA_NAME);
-				buildIndicatorInstance (EMAIndicator.class,IndicatorDef.EMA_NAME,IndicatorArgs,IndicatorDef.EMA_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.EMA_NAME,IndicatorDef.EMA_NUMBER_OF_ARGS,IndicatorDef.EMA_CLASS);
 			//SMA - Simple Moving Average
-			if (cliLine.hasOption (IndicatorDef.SMA_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.SMA_NAME);
-				buildIndicatorInstance (SMAIndicator.class,IndicatorDef.SMA_NAME,IndicatorArgs,IndicatorDef.SMA_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.SMA_NAME,IndicatorDef.SMA_NUMBER_OF_ARGS,IndicatorDef.SMA_CLASS);
+			//HMA - Hull Moving Average
+			addIndicatorToExecution (IndicatorDef.HMA_NAME,IndicatorDef.HMA_NUMBER_OF_ARGS,IndicatorDef.HMA_CLASS);
 			//PPO
-			if (cliLine.hasOption (IndicatorDef.PPO_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.PPO_NAME);
-				buildIndicatorInstance (PPOIndicator.class,IndicatorDef.PPO_NAME,IndicatorArgs,IndicatorDef.PPO_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.PPO_NAME,IndicatorDef.PPO_NUMBER_OF_ARGS,IndicatorDef.PPO_CLASS);
 			//ROC
-			if (cliLine.hasOption (IndicatorDef.ROC_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.ROC_NAME);
-				buildIndicatorInstance (ROCIndicator.class,IndicatorDef.ROC_NAME,IndicatorArgs,IndicatorDef.ROC_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.ROC_NAME,IndicatorDef.ROC_NUMBER_OF_ARGS,IndicatorDef.ROC_CLASS);
 			//Willians R
-			if (cliLine.hasOption (IndicatorDef.WILL_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.WILL_NAME);
-				buildIndicatorInstance (WilliamsRIndicator.class,IndicatorDef.WILL_NAME,IndicatorArgs,IndicatorDef.WILL_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.WILL_NAME,IndicatorDef.WILL_NUMBER_OF_ARGS,IndicatorDef.WILL_CLASS);
 			//Fisher
-			if (cliLine.hasOption (IndicatorDef.FISHER_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.FISHER_NAME);
-				buildIndicatorInstance (FisherIndicator.class,IndicatorDef.FISHER_NAME,IndicatorArgs,IndicatorDef.FISHER_NUMBER_OF_ARGS);
-			}
-			//HMAIndicator
-			if (cliLine.hasOption (IndicatorDef.HMA_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.HMA_NAME);
-				buildIndicatorInstance (HMAIndicator.class,IndicatorDef.HMA_NAME,IndicatorArgs,IndicatorDef.HMA_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.FISHER_NAME,IndicatorDef.FISHER_NUMBER_OF_ARGS,IndicatorDef.FISHER_CLASS);
 			//RAVI
-			if (cliLine.hasOption (IndicatorDef.RAVI_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.RAVI_NAME);
-				buildIndicatorInstance (RAVIIndicator.class,IndicatorDef.RAVI_NAME,IndicatorArgs,IndicatorDef.RAVI_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.RAVI_NAME,IndicatorDef.RAVI_NUMBER_OF_ARGS,IndicatorDef.RAVI_CLASS);
 			//MFI - Money Flow Index
-			if (cliLine.hasOption (IndicatorDef.MFI_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.MFI_NAME);
-				buildIndicatorInstance (MFIIndicator.class,IndicatorDef.MFI_NAME,IndicatorArgs,IndicatorDef.MFI_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.MFI_NAME,IndicatorDef.MFI_NUMBER_OF_ARGS,IndicatorDef.MFI_CLASS);
 			//BollingerMid
-			if (cliLine.hasOption (IndicatorDef.BOLLINGERMID_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.BOLLINGERMID_NAME);
-				buildIndicatorInstance (MyBollingerBandsMiddleIndicator.class,IndicatorDef.BOLLINGERMID_NAME,IndicatorArgs,IndicatorDef.BOLLINGERMID_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.BOLLINGERMID_NAME,IndicatorDef.BOLLINGERMID_NUMBER_OF_ARGS,IndicatorDef.BOLLINGERMID_CLASS);
 			//BollingerLower
-			if (cliLine.hasOption (IndicatorDef.BOLLINGERLOWER_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.BOLLINGERLOWER_NAME);
-				buildIndicatorInstance (MyBollingerBandsLowerIndicator.class,IndicatorDef.BOLLINGERLOWER_NAME,IndicatorArgs,IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.BOLLINGERLOWER_NAME,IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS,IndicatorDef.BOLLINGERLOWER_CLASS);
 			//BollingerUpper
-			if (cliLine.hasOption (IndicatorDef.BOLLINGERUPPER_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.BOLLINGERUPPER_NAME);
-				buildIndicatorInstance (MyBollingerBandsUpperIndicator.class,IndicatorDef.BOLLINGERUPPER_NAME,IndicatorArgs,IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS);
-			}
-			//Stochastic K - Estocastico
-			if (cliLine.hasOption (IndicatorDef.STOCHASTIC_K_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.STOCHASTIC_K_NAME);
-				buildIndicatorInstance (StochasticOscillatorKIndicator.class,IndicatorDef.STOCHASTIC_K_NAME,IndicatorArgs,IndicatorDef.STOCHASTIC_K_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.BOLLINGERUPPER_NAME,IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS,IndicatorDef.BOLLINGERUPPER_CLASS);
+			//Stochastic K 
+			addIndicatorToExecution (IndicatorDef.STOCHASTIC_K_NAME,IndicatorDef.STOCHASTIC_K_NUMBER_OF_ARGS,IndicatorDef.STOCHASTICK_K_CLASS);
+			//Stochastic D 
+			addIndicatorToExecution (IndicatorDef.STOCHASTIC_D_NAME,IndicatorDef.STOCHASTIC_D_NUMBER_OF_ARGS,IndicatorDef.STOCHASTICK_D_CLASS);
 			//Stochastic RSI
-			if (cliLine.hasOption (IndicatorDef.STOCHASTIC_RSI_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.STOCHASTIC_RSI_NAME);
-				buildIndicatorInstance (StochasticRSIIndicator.class,IndicatorDef.STOCHASTIC_RSI_NAME,IndicatorArgs,IndicatorDef.STOCHASTIC_RSI_NUMBER_OF_ARGS);
-			}			
+			addIndicatorToExecution (IndicatorDef.STOCHASTIC_RSI_NAME,IndicatorDef.STOCHASTIC_RSI_NUMBER_OF_ARGS,IndicatorDef.STOCHASTICK_RSI_CLASS);
 			//PVI - Positive Volume Index
-			if (cliLine.hasOption (IndicatorDef.POSITIVE_VOLUME_INDEX_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.POSITIVE_VOLUME_INDEX_NAME);
-				buildIndicatorInstance (PVIIndicator.class,IndicatorDef.POSITIVE_VOLUME_INDEX_NAME,IndicatorArgs,IndicatorDef.POSITIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.POSITIVE_VOLUME_INDEX_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_NUMBER_OF_ARGS,IndicatorDef.POSITIVE_VOLUME_INDEX_CLASS);
 			//NVI - Negative Volume Index
-			if (cliLine.hasOption (IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME)){
-				IndicatorArgs=cliLine.getOptionValues (IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME);
-				buildIndicatorInstance (NVIIndicator.class,IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME,IndicatorArgs,IndicatorDef.NEGATIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
-			}
+			addIndicatorToExecution (IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_NUMBER_OF_ARGS,IndicatorDef.NEGATIVE_VOLUME_INDEX_CLASS);
+			//MVWAP Moving Volume Weighted Average Price
+			addIndicatorToExecution (IndicatorDef.MVWAP_NAME,IndicatorDef.MVWAP_NUMBER_OF_ARGS,IndicatorDef.MVWAP_CLASS);
+			//VWAP Volume Weighted Average Price
+			addIndicatorToExecution (IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_NUMBER_OF_ARGS,IndicatorDef.VWAP_CLASS);
 
 		}
 		catch (InternalErrorException e){
@@ -663,6 +607,19 @@ public class BuildIndicators
 	   
 	        for (i=0;i<series.getTickCount();i++){
 		        strBuff=new StringBuffer ();
+		        if (timeFormat!=null){
+		        	switch (timeFormat){
+					case EPOCH:
+						strBuff.append (series.getTick(i).getEndTime().toEpochSecond ()).append(',');
+						break;
+					case FORMAT:
+						strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
+						break;
+					default:
+						break;
+		        	
+		        	}
+		        }
 		        if (tickOpenPrice){
 		        	strBuff.append (series.getTick (i).getOpenPrice ()).append(',');	
 		        }
@@ -678,28 +635,13 @@ public class BuildIndicators
 		        if (tickSize){
 		        	strBuff.append (series.getTick (i).getTrades ()).append(',');
 		        }
-		        if (tradePerSecond){
-		        	strBuff.append ((series.getTick (i).getTrades ()/iTickTime)).append(',');
-		        }
 		        if (tickVolume){
 		        	strBuff.append (series.getTick (i).getAmount ()).append(',');
 		        }
 		    	if (volumePerTrade){
 		    		strBuff.append (series.getTick (i).getAmount ().dividedBy (Decimal.valueOf (series.getTick (i).getTrades ()))).append(',');
 		    	}
-		        if (timeFormat!=null){
-		        	switch (timeFormat){
-					case EPOCH:
-						strBuff.append (series.getTick(i).getEndTime().toEpochSecond ()).append(',');
-						break;
-					case FORMAT:
-						strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
-						break;
-					default:
-						break;
-		        	
-		        	}
-		        }
+		        
 		        //Indicadores configurados
 		    	for (IndicatorArgs item:indicators){
 		    		strBuff.append (item.getIndicator ().getValue (i)).append(',');
