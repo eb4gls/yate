@@ -57,6 +57,7 @@ public class BuildIndicators
 	private final int defaultTickTime=300;//300 segundos
 	private int iTickTime=defaultTickTime;
 	private boolean verbose=false;
+	private boolean header=false;
 	
 	private boolean tickOpenPrice=false;
 	private boolean tickClosePrice=false;
@@ -162,6 +163,7 @@ public class BuildIndicators
 		Option fileOutOpt=null;
 		Option tickTimeOpt=null;
 		Option verboseOpt=null;
+		Option headerOpt=null;
 		
 		Option tickOpenPriceOpt=null;
 		Option tickClosePriceOpt=null;
@@ -211,22 +213,24 @@ public class BuildIndicators
 		fileOutOpt.setOptionalArg (true);
 		//Verbose
 		verboseOpt=new Option ("v","verbose",false,"Muestra el progreso en la creacion de los ticks");
+		//Header
+		headerOpt=new Option ("hd","header",false,"Incluye una cabecera con el nombre de cada campo");
 		//Tiempo del tick
 		tickTimeOpt=new Option ("ttime",true,"Tiempo con el que son creados los ticks expreado en segundos, si no se indica se toma por defecto 300 segundos");
 		tickTimeOpt.setOptionalArg (true);
 		tickTimeOpt.setType (Integer.class);
+	
+		tickOpenPriceOpt=new Option (ElementFieldDef.TICKCLOSEPRICE_SHORT_NAME,ElementFieldDef.TICKCLOSEPRICE_NAME,false,ElementFieldDef.TICKCLOSEPRICE_DESCRIPTION);
+		tickClosePriceOpt=new Option (ElementFieldDef.TICKOPENPRICE_SHORT_NAME,ElementFieldDef.TICKOPENPRICE_NAME,false,ElementFieldDef.TICKOPENPRICE_DESCRIPTION);
+		tickMinPriceOpt=new Option (ElementFieldDef.TICKMINPRICE_SHORT_NAME,ElementFieldDef.TICKMINPRICE_NAME,false,ElementFieldDef.TICKMINPRICE_DESCRIPTION);
+		tickMaxPriceOpt=new Option (ElementFieldDef.TICKMAXPRICE_SHORT_NAME,ElementFieldDef.TICKMAXPRICE_NAME,false,ElementFieldDef.TICKMAXPRICE_DESCRIPTION);
 		
-		tickOpenPriceOpt=new Option ("tcp","tickcloseprice",false,"Precio de cierre del Tick");
-		tickClosePriceOpt=new Option ("top","tickopenprice",false,"Precio de apertura del Tick");
-		tickMinPriceOpt=new Option ("tmp","tickminprice",false,"Precio minimo del Tick");
-		tickMaxPriceOpt=new Option ("txp","tickmaxprice",false,"Precio maximo del Tick");
-		
-		tickSizeOpt=new Option ("ts","ticksize",false,"Vuelca el numero de trades que contiene cada tick");
-		tickVolumeOpt=new Option ("tv","tickvolume",false,"Vuelca el volumen acumulado para el tick");
-		VolumePerTradeOpt=new Option ("vpt","volumepertrade",false,"Vuelca el volumen medio por trade en el tick calculado");
-		timeFormatOpt=new Option ("tf","timeformat",true,"Vuelca el tiempo en el formato indicado (Format o Epoch)");
-		timeFormatOpt.setArgs (1);
-		timeFormatOpt.setValueSeparator (',');
+		tickSizeOpt=new Option (ElementFieldDef.TICKSIZE_SHORT_NAME,ElementFieldDef.TICKSIZE_NAME,false,ElementFieldDef.TICKSIZE_DESCRIPTION);
+		tickVolumeOpt=new Option (ElementFieldDef.TICKVOLUME_SHORT_NAME,ElementFieldDef.TICKVOLUME_NAME,false,ElementFieldDef.TICKVOLUME_DESCRIPTION);
+		VolumePerTradeOpt=new Option (ElementFieldDef.VOLUMEPERTRADE_SHORT_NAME,ElementFieldDef.VOLUMEPERTRADE_NAME,false,ElementFieldDef.VOLUMEPERTRADE_DESCRIPTION);
+		timeFormatOpt=new Option (ElementFieldDef.TIME_SHORT_NAME,ElementFieldDef.TIME_NAME,true,ElementFieldDef.TIME_DESCRIPTION);
+		timeFormatOpt.setArgs (ElementFieldDef.TIME_NUMBER_OF_ARGS);
+		//timeFormatOpt.setValueSeparator (',');
 	
 		//Indicadores
 		//Awesome, 3 argumentos: p1, p2, [close price, variation price, typical price]
@@ -292,6 +296,7 @@ public class BuildIndicators
 	    options.addOption (fileOutOpt);
 	    options.addOption (tickTimeOpt);
 	    options.addOption (verboseOpt);
+	    options.addOption (headerOpt);
 	    
 	    options.addOption (tickOpenPriceOpt);
 	    options.addOption (tickClosePriceOpt);
@@ -365,40 +370,44 @@ public class BuildIndicators
 	    		verbose=true;
 	    	}
 	    	
+	    	if (cliLine.hasOption ("hd")){
+	    		header=true;
+	    	}
+	    	
 	    	//Precio de apertura del tick
-			if (cliLine.hasOption ("top")){
+			if (cliLine.hasOption (ElementFieldDef.TICKOPENPRICE_SHORT_NAME)){
 				tickOpenPrice=true;
 			}
 			//Precio de cierre del tick
-			if (cliLine.hasOption ("tcp")){
+			if (cliLine.hasOption (ElementFieldDef.TICKCLOSEPRICE_SHORT_NAME)){
 				tickClosePrice=true;
 			}
 			//Precio minimo del tick
-			if (cliLine.hasOption ("tmp")){
+			if (cliLine.hasOption (ElementFieldDef.TICKMINPRICE_SHORT_NAME)){
 				tickMinPrice=true;
 			}
 			//Precio maximo del tick
-			if (cliLine.hasOption ("txp")){
+			if (cliLine.hasOption (ElementFieldDef.TICKMAXPRICE_SHORT_NAME)){
 				tickMaxPrice=true;
 			}
 			
 			//Tamaño del tick en trades
-			if (cliLine.hasOption ("ts")){
+			if (cliLine.hasOption (ElementFieldDef.TICKSIZE_SHORT_NAME)){
 				tickSize=true;
 			}
 			
 			//Volumen acumulado para el tick
-			if (cliLine.hasOption ("tv")){
+			if (cliLine.hasOption (ElementFieldDef.TICKVOLUME_SHORT_NAME)){
 				tickVolume=true;
 			}
 			//Volumen por trade, volumen medio en el tick
-			if (cliLine.hasOption ("vpt")){
+			if (cliLine.hasOption (ElementFieldDef.VOLUMEPERTRADE_SHORT_NAME)){
 				volumePerTrade=true;
 			}
 			
 			//Formato del tiempo
-			if (cliLine.hasOption ("tf")){
-				timeFormat=TimeFormat.getTimeFormat (cliLine.getOptionValues ("tf")[0]);
+			if (cliLine.hasOption (ElementFieldDef.TIME_SHORT_NAME)){
+				timeFormat=TimeFormat.getTimeFormat (cliLine.getOptionValues (ElementFieldDef.TIME_SHORT_NAME)[0]);
 			}
 	    }	    
 	    catch (ParseException e){
@@ -417,6 +426,9 @@ public class BuildIndicators
 		
 		if (cliLine.hasOption (name)){
 			IndicatorArgs=cliLine.getOptionValues (name);
+			if ((argc!=0)&&(IndicatorArgs==null)){
+				throw new InternalErrorException ("El indicador "+name+" necesita argumentos que no se han suministrado");
+			}
 			buildIndicatorInstance (clazz,name,IndicatorArgs,argc);
 		}
 	}
@@ -628,7 +640,45 @@ public class BuildIndicators
 					return;
 				}
 			}
-	        
+			
+			//cabecera
+			if (header){
+				strBuff=new StringBuffer ();
+				 
+			    if (tickClosePrice){
+		    		strBuff.append (ElementFieldDef.TICKCLOSEPRICE_NAME+",");	
+		    	}
+		        if (tickOpenPrice){
+		        	strBuff.append (ElementFieldDef.TICKOPENPRICE_NAME+",");	
+		        }
+		    	if (tickMinPrice){
+		    		strBuff.append (ElementFieldDef.TICKMINPRICE_NAME+",");	
+		    	}
+		    	if (tickMaxPrice){
+		    		strBuff.append (ElementFieldDef.TICKMAXPRICE_NAME+",");	
+		    	}
+		        if (tickSize){
+		        	strBuff.append (ElementFieldDef.TICKSIZE_NAME+",");
+		        }
+		        if (tickVolume){
+		        	strBuff.append (ElementFieldDef.TICKVOLUME_NAME+",");
+		        }
+		    	if (volumePerTrade){
+		    		strBuff.append (ElementFieldDef.VOLUMEPERTRADE_NAME+",");
+		    	}
+		    	if (timeFormat!=null){
+		    		strBuff.append (ElementFieldDef.TIME_NAME+",");
+		    	}
+		    	
+		    	//Indicadores configurados
+		    	for (IndicatorArgs item:indicators){
+		    		strBuff.append (item.getName ()).append(',');
+				}
+		    	
+		    	strBuff.deleteCharAt (strBuff.length ()-1);
+		    	
+		    	pos.println (strBuff);
+			}
 	   
 	        for (i=0;i<series.getTickCount();i++){
 		        strBuff=new StringBuffer ();
