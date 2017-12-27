@@ -99,7 +99,7 @@ public class BuildSeries
 								System.out.print ("\b");
 							}
 						}
-						aux=String.format ("Procesando %d de %d Ticks",i,lines.size ());
+						aux=String.format ("Procesando %d de %d Trades",i,lines.size ());
 						System.out.print (aux);
 					}
 				}

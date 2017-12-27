@@ -194,7 +194,10 @@ public class BuildIndicators
 		Option nviIndOpt=null;
 		Option mvwapIndOpt=null;
 		Option vwapIndOpt=null;
-		
+		Option dailyTimeIndOpt=null;
+		Option weeklyTimeIndOpt=null;
+		Option monthlyTimeIndOpt=null;
+		Option yearlyTimeIndOpt=null;
 		
 	
 		
@@ -269,8 +272,17 @@ public class BuildIndicators
 		//MVWAP Moving Volume Weighted Average Price
 		mvwapIndOpt=addIndicatorToArgs (IndicatorDef.MVWAP_SHORT_NAME,IndicatorDef.MVWAP_NAME,IndicatorDef.MVWAP_DESCRIPTION,IndicatorDef.MVWAP_NUMBER_OF_ARGS);
 		//VWAP Volume Weighted Average Price
-		vwapIndOpt=addIndicatorToArgs (IndicatorDef.VWAP_SHORT_NAME,IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_DESCRIPTION,IndicatorDef.VWAP_NUMBER_OF_ARGS);
-				
+		vwapIndOpt=addIndicatorToArgs (IndicatorDef.VWAP_SHORT_NAME,IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_DESCRIPTION,IndicatorDef.VWAP_NUMBER_OF_ARGS);				
+		//Daily Time
+		dailyTimeIndOpt=addIndicatorToArgs (IndicatorDef.DAILYTIME_SHORT_NAME,IndicatorDef.DAILYTIME_NAME,IndicatorDef.DAILYTIME_DESCRIPTION,IndicatorDef.DAILYTIME_NUMBER_OF_ARGS);
+		//Weekly Time
+		weeklyTimeIndOpt=addIndicatorToArgs (IndicatorDef.WEEKLYTIME_SHORT_NAME,IndicatorDef.WEEKLYTIME_NAME,IndicatorDef.WEEKLYTIME_DESCRIPTION,IndicatorDef.WEEKLYTIME_NUMBER_OF_ARGS);
+		//Monthly Time
+		monthlyTimeIndOpt=addIndicatorToArgs (IndicatorDef.MONTHLYTIME_SHORT_NAME,IndicatorDef.MONTHLYTIME_NAME,IndicatorDef.MONTHLYTIME_DESCRIPTION,IndicatorDef.MONTHLYTIME_NUMBER_OF_ARGS);
+		//Daily Time
+		yearlyTimeIndOpt=addIndicatorToArgs (IndicatorDef.YEARLYTIME_SHORT_NAME,IndicatorDef.YEARLYTIME_NAME,IndicatorDef.YEARLYTIME_DESCRIPTION,IndicatorDef.YEARLYTIME_NUMBER_OF_ARGS);
+
+
 		
 	    options=new Options ();
 
@@ -312,6 +324,10 @@ public class BuildIndicators
 	    options.addOption (nviIndOpt);
 	    options.addOption (mvwapIndOpt);
 	    options.addOption (vwapIndOpt);
+	    options.addOption (dailyTimeIndOpt);
+	    options.addOption (weeklyTimeIndOpt);
+	    options.addOption (monthlyTimeIndOpt);
+	    options.addOption (yearlyTimeIndOpt);
 	    
 	    
 	  
@@ -456,6 +472,15 @@ public class BuildIndicators
 			addIndicatorToExecution (IndicatorDef.MVWAP_NAME,IndicatorDef.MVWAP_NUMBER_OF_ARGS,IndicatorDef.MVWAP_CLASS);
 			//VWAP Volume Weighted Average Price
 			addIndicatorToExecution (IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_NUMBER_OF_ARGS,IndicatorDef.VWAP_CLASS);
+			//Daily Time
+			addIndicatorToExecution (IndicatorDef.DAILYTIME_NAME,IndicatorDef.DAILYTIME_NUMBER_OF_ARGS,IndicatorDef.DAILYTIME_CLASS);			
+			//Weekly Time
+			addIndicatorToExecution (IndicatorDef.WEEKLYTIME_NAME,IndicatorDef.WEEKLYTIME_NUMBER_OF_ARGS,IndicatorDef.WEEKLYTIME_CLASS);
+			//Monthly Time
+			addIndicatorToExecution (IndicatorDef.MONTHLYTIME_NAME,IndicatorDef.MONTHLYTIME_NUMBER_OF_ARGS,IndicatorDef.MONTHLYTIME_CLASS);
+			//Yearly Time
+			addIndicatorToExecution (IndicatorDef.YEARLYTIME_NAME,IndicatorDef.YEARLYTIME_NUMBER_OF_ARGS,IndicatorDef.YEARLYTIME_CLASS);
+
 
 		}
 		catch (InternalErrorException e){
@@ -607,25 +632,13 @@ public class BuildIndicators
 	   
 	        for (i=0;i<series.getTickCount();i++){
 		        strBuff=new StringBuffer ();
-		        if (timeFormat!=null){
-		        	switch (timeFormat){
-					case EPOCH:
-						strBuff.append (series.getTick(i).getEndTime().toEpochSecond ()).append(',');
-						break;
-					case FORMAT:
-						strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
-						break;
-					default:
-						break;
-		        	
-		        	}
-		        }
+		      
+		        if (tickClosePrice){
+		    		strBuff.append (series.getTick (i).getClosePrice ()).append(',');	
+		    	}
 		        if (tickOpenPrice){
 		        	strBuff.append (series.getTick (i).getOpenPrice ()).append(',');	
 		        }
-		    	if (tickClosePrice){
-		    		strBuff.append (series.getTick (i).getClosePrice ()).append(',');	
-		    	}
 		    	if (tickMinPrice){
 		    		strBuff.append (series.getTick (i).getMinPrice ()).append(',');	
 		    	}
@@ -641,6 +654,20 @@ public class BuildIndicators
 		    	if (volumePerTrade){
 		    		strBuff.append (series.getTick (i).getAmount ().dividedBy (Decimal.valueOf (series.getTick (i).getTrades ()))).append(',');
 		    	}
+		    	
+		    	if (timeFormat!=null){
+		        	switch (timeFormat){
+					case EPOCH:
+						strBuff.append (series.getTick(i).getEndTime().toEpochSecond ()).append(',');
+						break;
+					case FORMAT:
+						strBuff.append (series.getTick(i).getEndTime().format (DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss"))).append(',');
+						break;
+					default:
+						break;
+		        	
+		        	}
+		        }
 		        
 		        //Indicadores configurados
 		    	for (IndicatorArgs item:indicators){

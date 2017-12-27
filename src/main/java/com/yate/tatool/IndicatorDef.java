@@ -17,12 +17,16 @@ import org.ta4j.core.indicators.volume.NVIIndicator;
 import org.ta4j.core.indicators.volume.PVIIndicator;
 import org.ta4j.core.indicators.volume.VWAPIndicator;
 
+import com.yate.ta4j.indicadores.DailyTimeIndicator;
 import com.yate.ta4j.indicadores.MFIIndicator;
+import com.yate.ta4j.indicadores.MonthlyTimeIndicator;
 import com.yate.ta4j.indicadores.MyBollingerBandsLowerIndicator;
 import com.yate.ta4j.indicadores.MyBollingerBandsMiddleIndicator;
 import com.yate.ta4j.indicadores.MyBollingerBandsUpperIndicator;
 import com.yate.ta4j.indicadores.MyMVWAPIndicator;
 import com.yate.ta4j.indicadores.MyStochasticOscillatorDIndicator;
+import com.yate.ta4j.indicadores.WeeklyTimeIndicator;
+import com.yate.ta4j.indicadores.YearlyTimeIndicator;
 
 public class IndicatorDef
 {
@@ -157,4 +161,28 @@ public class IndicatorDef
 	static public final String VWAP_SHORT_NAME="vwap";
 	static public final String VWAP_DESCRIPTION="Indicador VWAP (volume-weighted average price). Usar -"+MVWAP_SHORT_NAME+" o --"+MVWAP_NAME+". Argumentos: <TimeFrame> <Base de calculo (series)>";
 	static public final Class<?> VWAP_CLASS=VWAPIndicator.class;
+	
+	static public final int DAILYTIME_NUMBER_OF_ARGS=1;
+	static public final String DAILYTIME_NAME="dailytime";
+	static public final String DAILYTIME_SHORT_NAME="dt";
+	static public final String DAILYTIME_DESCRIPTION="Indicador Daily Time. Usar -"+DAILYTIME_SHORT_NAME+" o --"+DAILYTIME_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> DAILYTIME_CLASS=DailyTimeIndicator.class;
+	
+	static public final int WEEKLYTIME_NUMBER_OF_ARGS=1;
+	static public final String WEEKLYTIME_NAME="weeklytime";
+	static public final String WEEKLYTIME_SHORT_NAME="wt";
+	static public final String WEEKLYTIME_DESCRIPTION="Indicador Weekly Time. Usar -"+WEEKLYTIME_SHORT_NAME+" o --"+WEEKLYTIME_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> WEEKLYTIME_CLASS=WeeklyTimeIndicator.class;
+	
+	static public final int MONTHLYTIME_NUMBER_OF_ARGS=1;
+	static public final String MONTHLYTIME_NAME="monthlytime";
+	static public final String MONTHLYTIME_SHORT_NAME="mt";
+	static public final String MONTHLYTIME_DESCRIPTION="Indicador Monthly Time. Usar -"+MONTHLYTIME_SHORT_NAME+" o --"+MONTHLYTIME_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> MONTHLYTIME_CLASS=MonthlyTimeIndicator.class;
+	
+	static public final int YEARLYTIME_NUMBER_OF_ARGS=1;
+	static public final String YEARLYTIME_NAME="yearlytime";
+	static public final String YEARLYTIME_SHORT_NAME="yt";
+	static public final String YEARLYTIME_DESCRIPTION="Indicador Yearly Time. Usar -"+YEARLYTIME_SHORT_NAME+" o --"+YEARLYTIME_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> YEARLYTIME_CLASS=YearlyTimeIndicator.class;
 }
