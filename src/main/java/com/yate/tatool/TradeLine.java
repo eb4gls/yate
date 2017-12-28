@@ -22,7 +22,7 @@ public class TradeLine
 	static public Date getDateTime (String []line)
 	throws InternalErrorException
 	{
-		final String dateFormat="yyyyMMddhhmmss";
+		final String dateFormat="yyyyMMddHHmmss";
 		DateFormat sdf=null;
 		
 		
@@ -39,7 +39,7 @@ public class TradeLine
 	static public long getEpoch (String []line)
 	throws InternalErrorException
 	{
-		final String dateFormat="yyyyMMddhhmmss";
+		final String dateFormat="yyyyMMddHHmmss";
 		DateFormat sdf=null;
 		
 		

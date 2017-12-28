@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -35,6 +36,15 @@ public class BuildSeries
 		
 		String aux=null;
 		int j;
+		
+		Iterator <Tick> iterTick=null;
+		Tick tick=null;
+		boolean moreTicks=false;
+		
+		Iterator <String[]> iterTradeLine=null;
+		String[] tradeLine=null;	
+		
+		int removedTicks=0;
 		
 		
 		if ((lines!=null)&&!lines.isEmpty ()){//Si no null y no vacio
@@ -77,37 +87,55 @@ public class BuildSeries
 			// Filling the ticks with trades
 			trace.info ("Asignando "+lines.size ()+" trades a "+ticks.size ()+" ticks");
 			i=0;
-			for (String[] tradeLine: lines){
-				try{
-					tradeTimestamp=ZonedDateTime.ofInstant (Instant.ofEpochMilli (TradeLine.getEpoch (tradeLine)),ZoneId.systemDefault ());
+			
+			aux=" ";
+			System.out.print (aux);
+			
+			iterTick=ticks.iterator ();
+			if (iterTick.hasNext ()){//No debe ocurrir lo contrario
+				tick=iterTick.next ();
 				
-					for (Tick tick: ticks){
-						if (tick.inPeriod (tradeTimestamp)){
+				moreTicks=true;
+			
+				for (iterTradeLine=lines.iterator ();iterTradeLine.hasNext ()&&moreTicks;){
+					tradeLine=iterTradeLine.next ();
+					
+					try{		
+						tradeTimestamp=ZonedDateTime.ofInstant (Instant.ofEpochMilli (TradeLine.getEpoch (tradeLine)),ZoneId.systemDefault ());
+						
+						while (!tick.inPeriod (tradeTimestamp)&&(moreTicks=iterTick.hasNext ())){
+							tick=iterTick.next ();			
+						}
+						if (moreTicks){
 							tick.addTrade (TradeLine.getVolume (tradeLine),TradeLine.getPrice (tradeLine));
 						}
 					}
-				}
-				catch (InternalErrorException e){
-					trace.error ("Error de formato en la linea "+i+" "+e);
-					continue;
-				}
+					catch (InternalErrorException e){
+						trace.error ("Error de formato en la linea "+i+" "+e);
+						continue;
+					}
 				
-				if (verbose){
-					if ((i%20)==0){
-						if (i!=0){
+					if (verbose){
+						if ((i%50)==0){
 							for (j=0;j<aux.length ();j++){
 								System.out.print ("\b");
 							}
+							aux=String.format ("Procesando %d de %d Trades",i,lines.size ());
+							System.out.print (aux);
 						}
-						aux=String.format ("Procesando %d de %d Trades",i,lines.size ());
-						System.out.print (aux);
 					}
-				}
-				
-				i++;
+					
+					i++;
+				}	
 			}
+			for (j=0;verbose&&aux!=null&&j<aux.length ();j++){
+				System.out.print ("\b");
+			}
+			
 			// Removing still empty ticks
-			removeEmptyTicks (ticks);
+			trace.info ("Eliminando Ticks vacios");
+			removedTicks=removeEmptyTicks (ticks);
+			trace.info ("Se han eliminado "+removedTicks+" ticks vacios, quedan "+ticks.size ()+" Ticks para procesar");
 		}
 		//else{//Si ticks==null se sale con null, aunque la llamada BaseTimeSeries genera una serie vacia
 		//}
@@ -146,13 +174,20 @@ public class BuildSeries
      * Removes all empty (i.e. with no trade) ticks of the list.
      * @param ticks a list of ticks
      */
-	private static void removeEmptyTicks (List<Tick> ticks)
+	private static int removeEmptyTicks (List<Tick> ticks)
 	{
-		for (int i=ticks.size ()-1;i>=0;i--){
+		int i;
+		int removed=0;
+		
+
+		for (i=ticks.size ()-1;i>=0;i--){
 			if (ticks.get (i).getTrades ()==0){
 				ticks.remove (i);
+				removed++;
 			}
 		}
+		
+		return removed;
 	}
 
 }

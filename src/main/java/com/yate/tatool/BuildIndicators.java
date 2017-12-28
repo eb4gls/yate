@@ -621,6 +621,8 @@ public class BuildIndicators
 	private void build (String csvOutFile)
 	{
 		int i;
+		int j;
+		String aux=null;
 		StringBuffer strBuff=null;
         PrintStream pos=null;
         
@@ -679,8 +681,13 @@ public class BuildIndicators
 		    	
 		    	pos.println (strBuff);
 			}
+			
+			trace.info ("Procesando los indicadores sobre "+series.getTickCount ()+" Ticks de "+iTickTime+" segundos");
 	   
-	        for (i=0;i<series.getTickCount();i++){
+			aux=" ";
+			System.out.print (aux);
+			
+	        for (i=0;i<series.getTickCount ();i++){
 		        strBuff=new StringBuffer ();
 		      
 		        if (tickClosePrice){
@@ -726,7 +733,21 @@ public class BuildIndicators
 		    	strBuff.deleteCharAt (strBuff.length ()-1);
 		        
 		        pos.println (strBuff);
+		        
+		        
+		    	if (verbose){
+					if ((i%20)==0){
+						for (j=0;j<aux.length ();j++){
+							System.out.print ("\b");
+						}
+						aux=String.format ("Procesando %d de %d Ticks",i,series.getTickCount ());
+						System.out.print (aux);
+					}
+				}
 	        }
+	    	for (j=0;verbose&&aux!=null&&j<aux.length ();j++){
+				System.out.print ("\b");
+			}
 		}
 		finally{
 			pos.flush ();
