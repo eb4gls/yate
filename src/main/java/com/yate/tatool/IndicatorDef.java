@@ -1,23 +1,36 @@
 package com.yate.tatool;
 
 import org.ta4j.core.indicators.AwesomeOscillatorIndicator;
+import org.ta4j.core.indicators.CoppockCurveIndicator;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.FisherIndicator;
 import org.ta4j.core.indicators.HMAIndicator;
+import org.ta4j.core.indicators.KAMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.PPOIndicator;
+import org.ta4j.core.indicators.ParabolicSarIndicator;
 import org.ta4j.core.indicators.RAVIIndicator;
 import org.ta4j.core.indicators.ROCIndicator;
 import org.ta4j.core.indicators.RSIIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
+import org.ta4j.core.indicators.WMAIndicator;
 import org.ta4j.core.indicators.WilliamsRIndicator;
+import org.ta4j.core.indicators.adx.AverageDirectionalMovementIndicator;
+import org.ta4j.core.indicators.adx.DirectionalMovementMinusIndicator;
+import org.ta4j.core.indicators.adx.DirectionalMovementPlusIndicator;
+import org.ta4j.core.indicators.ichimoku.IchimokuSenkouSpanAIndicator;
+import org.ta4j.core.indicators.volume.ChaikinMoneyFlowIndicator;
 import org.ta4j.core.indicators.volume.NVIIndicator;
 import org.ta4j.core.indicators.volume.PVIIndicator;
 import org.ta4j.core.indicators.volume.VWAPIndicator;
 
 import com.yate.ta4j.indicadores.DailyTimeIndicator;
+import com.yate.ta4j.indicadores.DeMarkIndicatorTick;
+import com.yate.ta4j.indicadores.DeMarkRevIndicatorTickResistance;
+import com.yate.ta4j.indicadores.DeMarkRevIndicatorTickSupport;
+import com.yate.ta4j.indicadores.FibonacciRevIndicatorF1SuppTick;
 import com.yate.ta4j.indicadores.MFIIndicator;
 import com.yate.ta4j.indicadores.MonthlyTimeIndicator;
 import com.yate.ta4j.indicadores.MyBollingerBandsLowerIndicator;
@@ -65,6 +78,12 @@ public class IndicatorDef
 	static public final String HMA_NAME="hullmovingaverage";
 	static public final String HMA_DESCRIPTION="Indicador HMA (Hull Moving Average). Usar -hma o --hullmovingaverage. argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>";
 	static public final Class<?> HMA_CLASS=HMAIndicator.class;
+	
+	static public final int WMA_NUMBER_OF_ARGS=2;
+	static public final String WMA_SHORT_NAME="wma";
+	static public final String WMA_NAME="weigtedhmovingaverage";
+	static public final String WMA_DESCRIPTION="Indicador WMA (Weighted Moving Average). Usar -wma o --weihhtedmovingaverage. argumentos: <TimeFrame>,<Base de calculo (close,typical,variation,median)>";
+	static public final Class<?> WMA_CLASS=WMAIndicator.class;
 	
 	static public final int PPO_NUMBER_OF_ARGS=3;
 	static public final String PPO_SHORT_NAME="ppo";
@@ -185,4 +204,76 @@ public class IndicatorDef
 	static public final String YEARLYTIME_SHORT_NAME="yt";
 	static public final String YEARLYTIME_DESCRIPTION="Indicador Yearly Time. Usar -"+YEARLYTIME_SHORT_NAME+" o --"+YEARLYTIME_NAME+". Argumentos: <Base de calculo (series)>";
 	static public final Class<?> YEARLYTIME_CLASS=YearlyTimeIndicator.class;
+	
+	static public final int COPPOCKCURVE_NUMBER_OF_ARGS=1;
+	static public final String COPPOCKCURVE_NAME="coppockcurve";
+	static public final String COPPOCKCURVE_SHORT_NAME="cpp";
+	static public final String COPPOCKCURVE_DESCRIPTION="Indicador Coppock Curve. Usar -"+COPPOCKCURVE_SHORT_NAME+" o --"+COPPOCKCURVE_NAME+". Argumentos: <Base de calculo (close,typical,variation,median)>";
+	static public final Class<?> COPPOCKCURVE_CLASS=CoppockCurveIndicator.class;
+	
+	static public final int PARABOLICSAR_NUMBER_OF_ARGS=1;
+	static public final String PARABOLICSAR_NAME="parabolicsar";
+	static public final String PARABOLICSAR_SHORT_NAME="psar";
+	static public final String PARABOLICSAR_DESCRIPTION="Indicador Parabolic Sar. Usar -"+PARABOLICSAR_SHORT_NAME+" o --"+PARABOLICSAR_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> PARABOLICSAR_CLASS=ParabolicSarIndicator.class;
+	
+	static public final int KAMA_NUMBER_OF_ARGS=4;
+	static public final String KAMA_NAME="kama";
+	static public final String KAMA_SHORT_NAME="kma";
+	static public final String KAMA_DESCRIPTION="Indicador Kama. Usar -"+KAMA_SHORT_NAME+" o --"+KAMA_NAME+". Argumentos: timeFrameEffectiveRatio, timeFrameFast,timeFrameSlow (close,typical,variation,median)> \nEjemplo -kma 10,2,30,close";
+	static public final Class<?> KAMA_CLASS=KAMAIndicator.class;
+	
+	static public final int DEMARKPIVOTTICK_NUMBER_OF_ARGS=1;
+	static public final String DEMARKPIVOTTICK_NAME="demarkpivottick";
+	static public final String DEMARKPIVOTTICK_SHORT_NAME="dmt";
+	static public final String DEMARKPIVOTTICK_DESCRIPTION="Indicador DeMark Pivot Point Tick. Usar -"+DEMARKPIVOTTICK_SHORT_NAME+" o --"+DEMARKPIVOTTICK_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> DEMARKPIVOTTICK_CLASS=DeMarkIndicatorTick.class;
+	
+	static public final int DEMARKREVPIVOTTICKREST_NUMBER_OF_ARGS=1;
+	static public final String DEMARKREVPIVOTTICKREST_NAME="demarkrevpivottickrest";
+	static public final String DEMARKREVPIVOTTICKREST_SHORT_NAME="dmrtr";
+	static public final String DEMARKREVPIVOTTICKREST_DESCRIPTION="Indicador DeMark Reversal Pivot Point Tick Resistance. Usar -"+DEMARKREVPIVOTTICKREST_SHORT_NAME+" o --"+DEMARKREVPIVOTTICKREST_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> DEMARKREVPIVOTTICKREST_CLASS=DeMarkRevIndicatorTickResistance.class;
+	
+	static public final int DEMARKREVPIVOTTICKSUPP_NUMBER_OF_ARGS=1;
+	static public final String DEMARKREVPIVOTTICKSUPP_NAME="demarkrevpivotticksupp";
+	static public final String DEMARKREVPIVOTTICKSUPP_SHORT_NAME="dmrts";
+	static public final String DEMARKREVPIVOTTICKSUPP_DESCRIPTION="Indicador DeMark Reversal Pivot Point Tick Support. Usar -"+DEMARKREVPIVOTTICKSUPP_SHORT_NAME+" o --"+DEMARKREVPIVOTTICKSUPP_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> DEMARKREVPIVOTTICKSUPP_CLASS=DeMarkRevIndicatorTickSupport.class;
+	
+	static public final int FIBONACIREVF1ST_NUMBER_OF_ARGS=1;
+	static public final String FIBONACIREVF1ST_NAME="fibonaccirevf1supptick";
+	static public final String FIBONACIREVF1ST_SHORT_NAME="frf1st";
+	static public final String FIBONACIREVF1ST_DESCRIPTION="Indicador Fibonacci Reversal Factor 1 Tick Support. Usar -"+DEMARKREVPIVOTTICKSUPP_SHORT_NAME+" o --"+DEMARKREVPIVOTTICKSUPP_NAME+". Argumentos: <Base de calculo (series)>";
+	static public final Class<?> FIBONACIREVF1ST_CLASS=FibonacciRevIndicatorF1SuppTick.class;
+	
+	static public final int AVGDIRMOV_NUMBER_OF_ARGS=2;
+	static public final String AVGDIRMOV_NAME="avgdirmov";
+	static public final String AVGDIRMOV_SHORT_NAME="adm";
+	static public final String AVGDIRMOV_DESCRIPTION="Indicador Average Directional Movement Indicator. Usar -"+AVGDIRMOV_SHORT_NAME+" o --"+AVGDIRMOV_NAME+". Argumentos: timeframe,<Base de calculo (series)>";
+	static public final Class<?> AVGDIRMOV_CLASS=AverageDirectionalMovementIndicator.class;
+	
+	static public final int DIRMOVMINUS_NUMBER_OF_ARGS=2;
+	static public final String DIRMOVMINUS_NAME="dirmovminus";
+	static public final String DIRMOVMINUS_SHORT_NAME="dmm";
+	static public final String DIRMOVMINUS_DESCRIPTION="Indicador Directional Movement Minus Indicator. Usar -"+DIRMOVMINUS_SHORT_NAME+" o --"+DIRMOVMINUS_NAME+". Argumentos: timeframe,<Base de calculo (series)>";
+	static public final Class<?> DIRMOVMINUS_CLASS=DirectionalMovementMinusIndicator.class;
+	
+	static public final int DIRMOVPLUS_NUMBER_OF_ARGS=2;
+	static public final String DIRMOVPLUS_NAME="dirmovplus";
+	static public final String DIRMOVPLUS_SHORT_NAME="dmp";
+	static public final String DIRMOVPLUS_DESCRIPTION="Indicador Directional Movement Plus Indicator. Usar -"+DIRMOVPLUS_SHORT_NAME+" o --"+DIRMOVPLUS_NAME+". Argumentos: timeframe,<Base de calculo (series)>";
+	static public final Class<?> DIRMOVPLUS_CLASS=DirectionalMovementPlusIndicator.class;
+	
+	static public final int ICHIMOKUSA_NUMBER_OF_ARGS=3;
+	static public final String ICHIMOKUSA_NAME="ichimokusenkoua";
+	static public final String ICHIMOKUSA_SHORT_NAME="isa";
+	static public final String ICHIMOKUSA_DESCRIPTION="Indicador Ichimoku Senkou Indicator. Usar -"+ICHIMOKUSA_SHORT_NAME+" o --"+ICHIMOKUSA_NAME+". Argumentos: timeFrameConversionLine,timeFrameBaseLine,<Base de calculo (series)>\n Ejmplo -isa 9,26,series";
+	static public final Class<?> ICHIMOKUSA_CLASS=IchimokuSenkouSpanAIndicator.class;
+
+	static public final int CHAIKINMFI_NUMBER_OF_ARGS=2;
+	static public final String CHAIKINMFI_NAME="chaikinmoneyflow";
+	static public final String CHAIKINMFI_SHORT_NAME="cmf";
+	static public final String CHAIKINMFI_DESCRIPTION="Indicador Chaikin Money Flow Indicator. Usar -"+CHAIKINMFI_SHORT_NAME+" o --"+CHAIKINMFI_NAME+". Argumentos: timeFrame,<Base de calculo (series)>\n Ejmplo -cmf 14,series";
+	static public final Class<?> CHAIKINMFI_CLASS=ChaikinMoneyFlowIndicator.class;
 }

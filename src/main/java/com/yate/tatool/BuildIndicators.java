@@ -135,7 +135,7 @@ public class BuildIndicators
 	
 	
 	
-	private Option addIndicatorToArgs (String shortName,String name,String desc,int argc)
+	private Option addIndicatorToArgs (Options opts,String shortName,String name,String desc,int argc)
 	{
 		Option opt=null;
 		
@@ -143,6 +143,8 @@ public class BuildIndicators
 		opt.setOptionalArg (true);
 		opt.setArgs (argc);
 		opt.setValueSeparator (',');
+		
+		opts.addOption (opt);
 		
 		return opt;
 	}
@@ -174,34 +176,6 @@ public class BuildIndicators
 		Option VolumePerTradeOpt=null;
 		Option timeFormatOpt=null;
 		
-		Option awesomeIndOpt=null;
-		Option macdIndOpt=null;
-		Option rsiIndOpt=null;
-		Option emaIndOpt=null;
-		Option smaIndOpt=null;
-		Option ppoIndOpt=null;
-		Option rocIndOpt=null;
-		Option willIndOpt=null;
-		Option fisherIndOpt=null;
-		Option hmaIndOpt=null;
-		Option raviIndOpt=null;
-		Option mfiIndOpt=null;
-		Option bollMidIndOpt=null;
-		Option bollUpperIndOpt=null;
-		Option bollLowerIndOpt=null;
-		Option stochsaticKIndOpt=null;
-		Option stochsaticDIndOpt=null;
-		Option stochsaticRSIIndOpt=null;
-		Option pviIndOpt=null;
-		Option nviIndOpt=null;
-		Option mvwapIndOpt=null;
-		Option vwapIndOpt=null;
-		Option dailyTimeIndOpt=null;
-		Option weeklyTimeIndOpt=null;
-		Option monthlyTimeIndOpt=null;
-		Option yearlyTimeIndOpt=null;
-		
-	
 		
 		//Ayuda
 		helpOpt=new Option ("h","Imprime la ayuda");
@@ -232,61 +206,7 @@ public class BuildIndicators
 		timeFormatOpt.setArgs (ElementFieldDef.TIME_NUMBER_OF_ARGS);
 		//timeFormatOpt.setValueSeparator (',');
 	
-		//Indicadores
-		//Awesome, 3 argumentos: p1, p2, [close price, variation price, typical price]
-		awesomeIndOpt=addIndicatorToArgs (IndicatorDef.AWESOME_SHORT_NAME,IndicatorDef.AWESOME_NAME,IndicatorDef.AWESOME_DESCRIPTION,IndicatorDef.AWESOME_NUMBER_OF_ARGS);
-		//MACD
-		macdIndOpt=addIndicatorToArgs (IndicatorDef.MACD_SHORT_NAME,IndicatorDef.MACD_NAME,IndicatorDef.MACD_DESCRIPTION,IndicatorDef.MACD_NUMBER_OF_ARGS);
-		//RSI
-		rsiIndOpt=addIndicatorToArgs (IndicatorDef.RSI_SHORT_NAME,IndicatorDef.RSI_NAME,IndicatorDef.RSI_DESCRIPTION,IndicatorDef.EMA_NUMBER_OF_ARGS);
-		//EMA - Exponentical Moving Average
-		emaIndOpt=addIndicatorToArgs (IndicatorDef.EMA_SHORT_NAME,IndicatorDef.EMA_NAME,IndicatorDef.EMA_DESCRIPTION,IndicatorDef.EMA_NUMBER_OF_ARGS);
-		//SMA - Simple Moving Average
-		smaIndOpt=addIndicatorToArgs (IndicatorDef.SMA_SHORT_NAME,IndicatorDef.SMA_NAME,IndicatorDef.SMA_DESCRIPTION,IndicatorDef.SMA_NUMBER_OF_ARGS);
-		//HMA
-		hmaIndOpt=addIndicatorToArgs (IndicatorDef.HMA_SHORT_NAME,IndicatorDef.HMA_NAME,IndicatorDef.HMA_DESCRIPTION,IndicatorDef.HMA_NUMBER_OF_ARGS);
-		//PPO
-		ppoIndOpt=addIndicatorToArgs (IndicatorDef.PPO_SHORT_NAME,IndicatorDef.PPO_NAME,IndicatorDef.PPO_DESCRIPTION,IndicatorDef.PPO_NUMBER_OF_ARGS);
-		//ROC
-		rocIndOpt=addIndicatorToArgs (IndicatorDef.ROC_SHORT_NAME,IndicatorDef.ROC_NAME,IndicatorDef.ROC_DESCRIPTION,IndicatorDef.ROC_NUMBER_OF_ARGS);
-		//WILLIANSR
-		willIndOpt=addIndicatorToArgs (IndicatorDef.WILL_SHORT_NAME,IndicatorDef.WILL_NAME,IndicatorDef.WILL_DESCRIPTION,IndicatorDef.WILL_NUMBER_OF_ARGS);
-		//FISHER
-		fisherIndOpt=addIndicatorToArgs (IndicatorDef.FISHER_SHORT_NAME,IndicatorDef.FISHER_NAME,IndicatorDef.FISHER_DESCRIPTION,IndicatorDef.FISHER_NUMBER_OF_ARGS);
-		//RAVI
-		raviIndOpt=addIndicatorToArgs (IndicatorDef.RAVI_SHORT_NAME,IndicatorDef.RAVI_NAME,IndicatorDef.RAVI_DESCRIPTION,IndicatorDef.RAVI_NUMBER_OF_ARGS);
-		//MFI
-		mfiIndOpt=addIndicatorToArgs (IndicatorDef.MFI_SHORT_NAME,IndicatorDef.MFI_NAME,IndicatorDef.MFI_DESCRIPTION,IndicatorDef.MFI_NUMBER_OF_ARGS);
-		//BollingerMiddle
-		bollMidIndOpt=addIndicatorToArgs (IndicatorDef.BOLLINGERMID_SHORT_NAME,IndicatorDef.BOLLINGERMID_NAME,IndicatorDef.BOLLINGERMID_DESCRIPTION,IndicatorDef.BOLLINGERMID_NUMBER_OF_ARGS);
-		//BollingerUpper
-		bollUpperIndOpt=addIndicatorToArgs (IndicatorDef.BOLLINGERLOWER_SHORT_NAME,IndicatorDef.BOLLINGERLOWER_NAME,IndicatorDef.BOLLINGERLOWER_DESCRIPTION,IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS);
-		//BollingerLower
-		bollLowerIndOpt=addIndicatorToArgs (IndicatorDef.BOLLINGERUPPER_SHORT_NAME,IndicatorDef.BOLLINGERUPPER_NAME,IndicatorDef.BOLLINGERUPPER_DESCRIPTION,IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS);
-		//Stochastic K
-		stochsaticKIndOpt=addIndicatorToArgs (IndicatorDef.STOCHASTIC_K_SHORT_NAME,IndicatorDef.STOCHASTIC_K_NAME,IndicatorDef.STOCHASTIC_K_DESCRIPTION,IndicatorDef.STOCHASTIC_K_NUMBER_OF_ARGS);
-		//Stochastic D
-		stochsaticDIndOpt=addIndicatorToArgs (IndicatorDef.STOCHASTIC_D_SHORT_NAME,IndicatorDef.STOCHASTIC_D_NAME,IndicatorDef.STOCHASTIC_D_DESCRIPTION,IndicatorDef.STOCHASTIC_D_NUMBER_OF_ARGS);
-		//StochasticRSI
-		stochsaticRSIIndOpt=addIndicatorToArgs (IndicatorDef.STOCHASTIC_RSI_SHORT_NAME,IndicatorDef.STOCHASTIC_RSI_NAME,IndicatorDef.STOCHASTIC_RSI_DESCRIPTION,IndicatorDef.STOCHASTIC_RSI_NUMBER_OF_ARGS);
-		//PVI - Positive Value Index
-		pviIndOpt=addIndicatorToArgs (IndicatorDef.POSITIVE_VOLUME_INDEX_SHORT_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_DESCRIPTION,IndicatorDef.POSITIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
-		//NVI - Negative Value Index
-		nviIndOpt=addIndicatorToArgs (IndicatorDef.NEGATIVE_VOLUME_INDEX_SHORT_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_DESCRIPTION,IndicatorDef.NEGATIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
-		//MVWAP Moving Volume Weighted Average Price
-		mvwapIndOpt=addIndicatorToArgs (IndicatorDef.MVWAP_SHORT_NAME,IndicatorDef.MVWAP_NAME,IndicatorDef.MVWAP_DESCRIPTION,IndicatorDef.MVWAP_NUMBER_OF_ARGS);
-		//VWAP Volume Weighted Average Price
-		vwapIndOpt=addIndicatorToArgs (IndicatorDef.VWAP_SHORT_NAME,IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_DESCRIPTION,IndicatorDef.VWAP_NUMBER_OF_ARGS);				
-		//Daily Time
-		dailyTimeIndOpt=addIndicatorToArgs (IndicatorDef.DAILYTIME_SHORT_NAME,IndicatorDef.DAILYTIME_NAME,IndicatorDef.DAILYTIME_DESCRIPTION,IndicatorDef.DAILYTIME_NUMBER_OF_ARGS);
-		//Weekly Time
-		weeklyTimeIndOpt=addIndicatorToArgs (IndicatorDef.WEEKLYTIME_SHORT_NAME,IndicatorDef.WEEKLYTIME_NAME,IndicatorDef.WEEKLYTIME_DESCRIPTION,IndicatorDef.WEEKLYTIME_NUMBER_OF_ARGS);
-		//Monthly Time
-		monthlyTimeIndOpt=addIndicatorToArgs (IndicatorDef.MONTHLYTIME_SHORT_NAME,IndicatorDef.MONTHLYTIME_NAME,IndicatorDef.MONTHLYTIME_DESCRIPTION,IndicatorDef.MONTHLYTIME_NUMBER_OF_ARGS);
-		//Daily Time
-		yearlyTimeIndOpt=addIndicatorToArgs (IndicatorDef.YEARLYTIME_SHORT_NAME,IndicatorDef.YEARLYTIME_NAME,IndicatorDef.YEARLYTIME_DESCRIPTION,IndicatorDef.YEARLYTIME_NUMBER_OF_ARGS);
-
-
+		
 		
 	    options=new Options ();
 
@@ -307,35 +227,88 @@ public class BuildIndicators
 	    options.addOption (VolumePerTradeOpt);
 	    options.addOption (timeFormatOpt);
 	    
-	    options.addOption (awesomeIndOpt);
-	    options.addOption (macdIndOpt);
-	    options.addOption (rsiIndOpt);
-	    options.addOption (emaIndOpt);
-	    options.addOption (smaIndOpt);
-	    options.addOption (ppoIndOpt);
-	    options.addOption (rocIndOpt);
-	    options.addOption (willIndOpt);
-	    options.addOption (fisherIndOpt);
-	    options.addOption (hmaIndOpt);
-	    options.addOption (raviIndOpt);
-	    options.addOption (mfiIndOpt);
-	    options.addOption (bollMidIndOpt);
-	    options.addOption (bollLowerIndOpt);
-	    options.addOption (bollUpperIndOpt);
-	    options.addOption (stochsaticKIndOpt);
-	    options.addOption (stochsaticDIndOpt);
-	    options.addOption (stochsaticRSIIndOpt);
-	    options.addOption (pviIndOpt);
-	    options.addOption (nviIndOpt);
-	    options.addOption (mvwapIndOpt);
-	    options.addOption (vwapIndOpt);
-	    options.addOption (dailyTimeIndOpt);
-	    options.addOption (weeklyTimeIndOpt);
-	    options.addOption (monthlyTimeIndOpt);
-	    options.addOption (yearlyTimeIndOpt);
 	    
-	    
-	  
+		//Indicadores
+		//Awesome, 3 argumentos: p1, p2, [close price, variation price, typical price]
+		addIndicatorToArgs (options,IndicatorDef.AWESOME_SHORT_NAME,IndicatorDef.AWESOME_NAME,IndicatorDef.AWESOME_DESCRIPTION,IndicatorDef.AWESOME_NUMBER_OF_ARGS);
+		//MACD
+		addIndicatorToArgs (options,IndicatorDef.MACD_SHORT_NAME,IndicatorDef.MACD_NAME,IndicatorDef.MACD_DESCRIPTION,IndicatorDef.MACD_NUMBER_OF_ARGS);
+		//RSI
+		addIndicatorToArgs (options,IndicatorDef.RSI_SHORT_NAME,IndicatorDef.RSI_NAME,IndicatorDef.RSI_DESCRIPTION,IndicatorDef.EMA_NUMBER_OF_ARGS);
+		//EMA - Exponentical Moving Average
+		addIndicatorToArgs (options,IndicatorDef.EMA_SHORT_NAME,IndicatorDef.EMA_NAME,IndicatorDef.EMA_DESCRIPTION,IndicatorDef.EMA_NUMBER_OF_ARGS);
+		//SMA - Simple Moving Average
+		addIndicatorToArgs (options,IndicatorDef.SMA_SHORT_NAME,IndicatorDef.SMA_NAME,IndicatorDef.SMA_DESCRIPTION,IndicatorDef.SMA_NUMBER_OF_ARGS);
+		//HMA
+		addIndicatorToArgs (options,IndicatorDef.HMA_SHORT_NAME,IndicatorDef.HMA_NAME,IndicatorDef.HMA_DESCRIPTION,IndicatorDef.HMA_NUMBER_OF_ARGS);
+		//WMA
+		addIndicatorToArgs (options,IndicatorDef.WMA_SHORT_NAME,IndicatorDef.WMA_NAME,IndicatorDef.WMA_DESCRIPTION,IndicatorDef.WMA_NUMBER_OF_ARGS);
+		//PPO
+		addIndicatorToArgs (options,IndicatorDef.PPO_SHORT_NAME,IndicatorDef.PPO_NAME,IndicatorDef.PPO_DESCRIPTION,IndicatorDef.PPO_NUMBER_OF_ARGS);
+		//ROC
+		addIndicatorToArgs (options,IndicatorDef.ROC_SHORT_NAME,IndicatorDef.ROC_NAME,IndicatorDef.ROC_DESCRIPTION,IndicatorDef.ROC_NUMBER_OF_ARGS);
+		//WILLIANSR
+		addIndicatorToArgs (options,IndicatorDef.WILL_SHORT_NAME,IndicatorDef.WILL_NAME,IndicatorDef.WILL_DESCRIPTION,IndicatorDef.WILL_NUMBER_OF_ARGS);
+		//FISHER
+		addIndicatorToArgs (options,IndicatorDef.FISHER_SHORT_NAME,IndicatorDef.FISHER_NAME,IndicatorDef.FISHER_DESCRIPTION,IndicatorDef.FISHER_NUMBER_OF_ARGS);
+		//RAVI
+		addIndicatorToArgs (options,IndicatorDef.RAVI_SHORT_NAME,IndicatorDef.RAVI_NAME,IndicatorDef.RAVI_DESCRIPTION,IndicatorDef.RAVI_NUMBER_OF_ARGS);
+		//MFI
+		addIndicatorToArgs (options,IndicatorDef.MFI_SHORT_NAME,IndicatorDef.MFI_NAME,IndicatorDef.MFI_DESCRIPTION,IndicatorDef.MFI_NUMBER_OF_ARGS);
+		//BollingerMiddle
+		addIndicatorToArgs (options,IndicatorDef.BOLLINGERMID_SHORT_NAME,IndicatorDef.BOLLINGERMID_NAME,IndicatorDef.BOLLINGERMID_DESCRIPTION,IndicatorDef.BOLLINGERMID_NUMBER_OF_ARGS);
+		//BollingerUpper
+		addIndicatorToArgs (options,IndicatorDef.BOLLINGERLOWER_SHORT_NAME,IndicatorDef.BOLLINGERLOWER_NAME,IndicatorDef.BOLLINGERLOWER_DESCRIPTION,IndicatorDef.BOLLINGERLOWER_NUMBER_OF_ARGS);
+		//BollingerLower
+		addIndicatorToArgs (options,IndicatorDef.BOLLINGERUPPER_SHORT_NAME,IndicatorDef.BOLLINGERUPPER_NAME,IndicatorDef.BOLLINGERUPPER_DESCRIPTION,IndicatorDef.BOLLINGERUPPER_NUMBER_OF_ARGS);
+		//Stochastic K
+		addIndicatorToArgs (options,IndicatorDef.STOCHASTIC_K_SHORT_NAME,IndicatorDef.STOCHASTIC_K_NAME,IndicatorDef.STOCHASTIC_K_DESCRIPTION,IndicatorDef.STOCHASTIC_K_NUMBER_OF_ARGS);
+		//Stochastic D
+		addIndicatorToArgs (options,IndicatorDef.STOCHASTIC_D_SHORT_NAME,IndicatorDef.STOCHASTIC_D_NAME,IndicatorDef.STOCHASTIC_D_DESCRIPTION,IndicatorDef.STOCHASTIC_D_NUMBER_OF_ARGS);
+		//StochasticRSI
+		addIndicatorToArgs (options,IndicatorDef.STOCHASTIC_RSI_SHORT_NAME,IndicatorDef.STOCHASTIC_RSI_NAME,IndicatorDef.STOCHASTIC_RSI_DESCRIPTION,IndicatorDef.STOCHASTIC_RSI_NUMBER_OF_ARGS);
+		//PVI - Positive Value Index
+		addIndicatorToArgs (options,IndicatorDef.POSITIVE_VOLUME_INDEX_SHORT_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_NAME,IndicatorDef.POSITIVE_VOLUME_INDEX_DESCRIPTION,IndicatorDef.POSITIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
+		//NVI - Negative Value Index
+		addIndicatorToArgs (options,IndicatorDef.NEGATIVE_VOLUME_INDEX_SHORT_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_NAME,IndicatorDef.NEGATIVE_VOLUME_INDEX_DESCRIPTION,IndicatorDef.NEGATIVE_VOLUME_INDEX_NUMBER_OF_ARGS);
+		//MVWAP Moving Volume Weighted Average Price
+		addIndicatorToArgs (options,IndicatorDef.MVWAP_SHORT_NAME,IndicatorDef.MVWAP_NAME,IndicatorDef.MVWAP_DESCRIPTION,IndicatorDef.MVWAP_NUMBER_OF_ARGS);
+		//VWAP Volume Weighted Average Price
+		addIndicatorToArgs (options,IndicatorDef.VWAP_SHORT_NAME,IndicatorDef.VWAP_NAME,IndicatorDef.VWAP_DESCRIPTION,IndicatorDef.VWAP_NUMBER_OF_ARGS);
+		//Daily Time
+		addIndicatorToArgs (options,IndicatorDef.DAILYTIME_SHORT_NAME,IndicatorDef.DAILYTIME_NAME,IndicatorDef.DAILYTIME_DESCRIPTION,IndicatorDef.DAILYTIME_NUMBER_OF_ARGS);
+		//Weekly Time
+		addIndicatorToArgs (options,IndicatorDef.WEEKLYTIME_SHORT_NAME,IndicatorDef.WEEKLYTIME_NAME,IndicatorDef.WEEKLYTIME_DESCRIPTION,IndicatorDef.WEEKLYTIME_NUMBER_OF_ARGS);
+		//Monthly Time
+		addIndicatorToArgs (options,IndicatorDef.MONTHLYTIME_SHORT_NAME,IndicatorDef.MONTHLYTIME_NAME,IndicatorDef.MONTHLYTIME_DESCRIPTION,IndicatorDef.MONTHLYTIME_NUMBER_OF_ARGS);
+		//Daily Time
+		addIndicatorToArgs (options,IndicatorDef.YEARLYTIME_SHORT_NAME,IndicatorDef.YEARLYTIME_NAME,IndicatorDef.YEARLYTIME_DESCRIPTION,IndicatorDef.YEARLYTIME_NUMBER_OF_ARGS);
+		//CoppockCurve 
+		addIndicatorToArgs (options,IndicatorDef.COPPOCKCURVE_SHORT_NAME,IndicatorDef.COPPOCKCURVE_NAME,IndicatorDef.COPPOCKCURVE_DESCRIPTION,IndicatorDef.COPPOCKCURVE_NUMBER_OF_ARGS);
+		//Parabolic Sar 
+		addIndicatorToArgs (options,IndicatorDef.PARABOLICSAR_SHORT_NAME,IndicatorDef.PARABOLICSAR_NAME,IndicatorDef.PARABOLICSAR_DESCRIPTION,IndicatorDef.PARABOLICSAR_NUMBER_OF_ARGS);
+		//Kama 
+		addIndicatorToArgs (options,IndicatorDef.KAMA_SHORT_NAME,IndicatorDef.KAMA_NAME,IndicatorDef.KAMA_DESCRIPTION,IndicatorDef.KAMA_NUMBER_OF_ARGS);
+		//DeMark Pivot Point Tick
+		addIndicatorToArgs (options,IndicatorDef.DEMARKPIVOTTICK_SHORT_NAME,IndicatorDef.DEMARKPIVOTTICK_NAME,IndicatorDef.DEMARKPIVOTTICK_DESCRIPTION,IndicatorDef.DEMARKPIVOTTICK_NUMBER_OF_ARGS);
+		//DeMark Reversal Pivot Point Tick Resistance
+		addIndicatorToArgs (options,IndicatorDef.DEMARKREVPIVOTTICKREST_SHORT_NAME,IndicatorDef.DEMARKREVPIVOTTICKREST_NAME,IndicatorDef.DEMARKREVPIVOTTICKREST_DESCRIPTION,IndicatorDef.DEMARKREVPIVOTTICKREST_NUMBER_OF_ARGS);
+		//DeMark Reversal Pivot Point Tick Support
+		addIndicatorToArgs (options,IndicatorDef.DEMARKREVPIVOTTICKSUPP_SHORT_NAME,IndicatorDef.DEMARKREVPIVOTTICKSUPP_NAME,IndicatorDef.DEMARKREVPIVOTTICKSUPP_DESCRIPTION,IndicatorDef.DEMARKREVPIVOTTICKSUPP_NUMBER_OF_ARGS);
+		//Indicador Fibonacci Reversal Factor 1 Tick Support
+		addIndicatorToArgs (options,IndicatorDef.FIBONACIREVF1ST_SHORT_NAME,IndicatorDef.FIBONACIREVF1ST_NAME,IndicatorDef.FIBONACIREVF1ST_DESCRIPTION,IndicatorDef.FIBONACIREVF1ST_NUMBER_OF_ARGS);
+		//Average Directional Movement Indicator 
+		addIndicatorToArgs (options,IndicatorDef.AVGDIRMOV_SHORT_NAME,IndicatorDef.AVGDIRMOV_NAME,IndicatorDef.AVGDIRMOV_DESCRIPTION,IndicatorDef.AVGDIRMOV_NUMBER_OF_ARGS);
+		//Directional Movement Minus Indicator 
+		addIndicatorToArgs (options,IndicatorDef.DIRMOVMINUS_SHORT_NAME,IndicatorDef.DIRMOVMINUS_NAME,IndicatorDef.DIRMOVMINUS_DESCRIPTION,IndicatorDef.DIRMOVMINUS_NUMBER_OF_ARGS);
+		//Directional Movement Plus Indicator 
+		addIndicatorToArgs (options,IndicatorDef.DIRMOVPLUS_SHORT_NAME,IndicatorDef.DIRMOVPLUS_NAME,IndicatorDef.DIRMOVPLUS_DESCRIPTION,IndicatorDef.DIRMOVPLUS_NUMBER_OF_ARGS);
+		//Ichimoku Senkou A Indicator
+		addIndicatorToArgs (options,IndicatorDef.ICHIMOKUSA_SHORT_NAME,IndicatorDef.ICHIMOKUSA_NAME,IndicatorDef.ICHIMOKUSA_DESCRIPTION,IndicatorDef.ICHIMOKUSA_NUMBER_OF_ARGS);
+		//Chaikin Money Flow Indicator
+		addIndicatorToArgs (options,IndicatorDef.CHAIKINMFI_SHORT_NAME,IndicatorDef.CHAIKINMFI_NAME,IndicatorDef.CHAIKINMFI_DESCRIPTION,IndicatorDef.CHAIKINMFI_NUMBER_OF_ARGS);
+
+	     
 	    cliParser=new GnuParser ();
 	    try{
 	    	//parse the command line arguments
@@ -452,6 +425,8 @@ public class BuildIndicators
 			addIndicatorToExecution (IndicatorDef.SMA_NAME,IndicatorDef.SMA_NUMBER_OF_ARGS,IndicatorDef.SMA_CLASS);
 			//HMA - Hull Moving Average
 			addIndicatorToExecution (IndicatorDef.HMA_NAME,IndicatorDef.HMA_NUMBER_OF_ARGS,IndicatorDef.HMA_CLASS);
+			//WMA - Weigthed Moving Average
+			addIndicatorToExecution (IndicatorDef.WMA_NAME,IndicatorDef.WMA_NUMBER_OF_ARGS,IndicatorDef.WMA_CLASS);
 			//PPO
 			addIndicatorToExecution (IndicatorDef.PPO_NAME,IndicatorDef.PPO_NUMBER_OF_ARGS,IndicatorDef.PPO_CLASS);
 			//ROC
@@ -492,8 +467,30 @@ public class BuildIndicators
 			addIndicatorToExecution (IndicatorDef.MONTHLYTIME_NAME,IndicatorDef.MONTHLYTIME_NUMBER_OF_ARGS,IndicatorDef.MONTHLYTIME_CLASS);
 			//Yearly Time
 			addIndicatorToExecution (IndicatorDef.YEARLYTIME_NAME,IndicatorDef.YEARLYTIME_NUMBER_OF_ARGS,IndicatorDef.YEARLYTIME_CLASS);
-
-
+			//Coppock Curve
+			addIndicatorToExecution (IndicatorDef.COPPOCKCURVE_NAME,IndicatorDef.COPPOCKCURVE_NUMBER_OF_ARGS,IndicatorDef.COPPOCKCURVE_CLASS);
+			//Parabolic Sar
+			addIndicatorToExecution (IndicatorDef.PARABOLICSAR_NAME,IndicatorDef.PARABOLICSAR_NUMBER_OF_ARGS,IndicatorDef.PARABOLICSAR_CLASS);
+			//KAMA
+			addIndicatorToExecution (IndicatorDef.KAMA_NAME,IndicatorDef.KAMA_NUMBER_OF_ARGS,IndicatorDef.KAMA_CLASS);
+			//DeMark Pivot Indicator Tick
+			addIndicatorToExecution (IndicatorDef.DEMARKPIVOTTICK_NAME,IndicatorDef.DEMARKPIVOTTICK_NUMBER_OF_ARGS,IndicatorDef.DEMARKPIVOTTICK_CLASS);
+			//DeMark Reversal Pivot Point Tick Resistance
+			addIndicatorToExecution (IndicatorDef.DEMARKREVPIVOTTICKREST_NAME,IndicatorDef.DEMARKREVPIVOTTICKREST_NUMBER_OF_ARGS,IndicatorDef.DEMARKREVPIVOTTICKREST_CLASS);
+			//DeMark Reversal Pivot Point Tick Support
+			addIndicatorToExecution (IndicatorDef.DEMARKREVPIVOTTICKSUPP_NAME,IndicatorDef.DEMARKREVPIVOTTICKSUPP_NUMBER_OF_ARGS,IndicatorDef.DEMARKREVPIVOTTICKSUPP_CLASS);
+			//Indicador Fibonacci Reversal Factor 1 Tick Support
+			addIndicatorToExecution (IndicatorDef.FIBONACIREVF1ST_NAME,IndicatorDef.FIBONACIREVF1ST_NUMBER_OF_ARGS,IndicatorDef.FIBONACIREVF1ST_CLASS);
+			//Average Directional Movement Indicator
+			addIndicatorToExecution (IndicatorDef.AVGDIRMOV_NAME,IndicatorDef.AVGDIRMOV_NUMBER_OF_ARGS,IndicatorDef.AVGDIRMOV_CLASS);
+			//Directional Movement Minus Indicator
+			addIndicatorToExecution (IndicatorDef.DIRMOVMINUS_NAME,IndicatorDef.DIRMOVMINUS_NUMBER_OF_ARGS,IndicatorDef.DIRMOVMINUS_CLASS);
+			//Directional Movement Plus Indicator
+			addIndicatorToExecution (IndicatorDef.DIRMOVPLUS_NAME,IndicatorDef.DIRMOVPLUS_NUMBER_OF_ARGS,IndicatorDef.DIRMOVPLUS_CLASS);
+			//Ichimoku Senkou A Indicator
+			addIndicatorToExecution (IndicatorDef.ICHIMOKUSA_NAME,IndicatorDef.ICHIMOKUSA_NUMBER_OF_ARGS,IndicatorDef.ICHIMOKUSA_CLASS);
+			//Chaikin Money Flow Indicator
+			addIndicatorToExecution (IndicatorDef.CHAIKINMFI_NAME,IndicatorDef.CHAIKINMFI_NUMBER_OF_ARGS,IndicatorDef.CHAIKINMFI_CLASS);
 		}
 		catch (InternalErrorException e){
 			trace.error ("Error instanciando indicadores ",e);
