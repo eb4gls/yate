@@ -17,25 +17,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with EMVLibLite.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.yate.indicadores.Exceptions;
+package com.yate.indicadores.exceptions;
 
-public class InternalErrorException extends Exception
+public class ModelException extends Exception
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1444302472095530412L;
+	private static final long serialVersionUID = 8167221460438917269L;
 	private String error;
 	private int code;
 	
 	
-	public InternalErrorException (int c,String error)
+	public ModelException (int c,String error)
 	{
 		this.code=c;
 		this.error=error;
 	}
 	
-	public InternalErrorException (String error)
+	public ModelException (String error)
 	{
 		this.error=error;
 		this.code=0;
@@ -53,10 +53,12 @@ public class InternalErrorException extends Exception
 	
 	public String toString ()
 	{
-		if (code==0)
-			return "Error interno ("+error+")";
-		else
-			return "Error interno, codigo "+code+" ("+error+")";
+		if (code==0){
+			return "Error de modelo ("+error+")";
+		}
+		else{
+			return "Error de modelo, codigo "+String.format ("%08X",code)+" ("+error+")";
+		}
 	}
 
 }

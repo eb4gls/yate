@@ -32,7 +32,7 @@ import org.ta4j.core.indicators.helpers.PriceVariationIndicator;
 import org.ta4j.core.indicators.helpers.TypicalPriceIndicator;
 
 import com.opencsv.CSVReader;
-import com.yate.indicadores.Exceptions.InternalErrorException;
+import com.yate.indicadores.exceptions.InternalErrorException;
 
 
 

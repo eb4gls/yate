@@ -15,7 +15,7 @@ import org.ta4j.core.BaseTimeSeries;
 import org.ta4j.core.Tick;
 import org.ta4j.core.TimeSeries;
 
-import com.yate.indicadores.Exceptions.InternalErrorException;
+import com.yate.indicadores.exceptions.InternalErrorException;
 
 
 

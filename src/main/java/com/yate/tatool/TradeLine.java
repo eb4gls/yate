@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.yate.indicadores.Exceptions.InternalErrorException;
+import com.yate.indicadores.exceptions.InternalErrorException;
 
 /**
  * Parse una linea correspondiente a una cotizacion (trade) de un fichero CSV.
